@@ -13,3 +13,6 @@ db.on('connected', () =>
 db.on('error', (error) =>
   console.error('\nMongoDB 연결에 실패하였습니다...\n' + '\n' + error)
 );
+
+export * from './models/HospStatusModel';
+export * from './models/HospRegStatusModel';
