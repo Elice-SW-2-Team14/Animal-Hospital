@@ -72,8 +72,8 @@ userRouter.post('/login', async(req : Request,res : Response, next : NextFunctio
 
         const userToken = await userService.getUserToken({email, password});
 
-        console.log(userToken);
-        res.sendStatus(201).json(userToken); //userId, role, userStatus
+        // console.log(userToken);
+        res.json({userToken}); //userId, role, userStatus
     
 
     }
