@@ -1,4 +1,4 @@
-import {userModel, UserModel, UserInfo, UserData} from '../db'
+import {userModel, UserModel, UserInfo, UserData, StatusInfoRequired} from '../db'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -116,9 +116,9 @@ class UserService {
 
             if(password){
                 const newPasswordHash = await bcrypt.hash(password, 10);
-                toUpdate.password = newPasswordHash
+                toUpdate.password = newPasswordHash;
             }
-
+            
             user = await this.userModel.update({
                 email,
                 update :toUpdate
@@ -159,6 +159,20 @@ class UserService {
     
         
       }
+
+    async getUsers() : Promise<UserData[]>{
+        const users = await this.userModel.findAll();
+        return users;
+    }
+
+    async setStatus(statusInfoRequired : StatusInfoRequired) : Promise<string | undefined>{
+        const {userId, userStatus} = statusInfoRequired;
+        const user = await this.userModel.findById(userId)
+        const newStatus = await this.userModel.updateStatus(statusInfoRequired)
+        console.log(newStatus)
+        return newStatus;
+    }
+
 }
 
 const userService = new UserService(userModel);

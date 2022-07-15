@@ -29,11 +29,19 @@ class HospitalService {
     } = hospitalInfo;
 
     // 이메일 중복 확인
-    const hospital = await this.hospitalModel.findByEmail(email);
+    const hospitalFindbyEmail = await this.hospitalModel.findByEmail(email);
 
-    if (hospital) {
+    if (hospitalFindbyEmail) {
       throw new Error(
         '이 이메일은 현재 사용중입니다. 다른 이메일을 입력해 주세요.'
+      );
+    }
+
+    const hospitalFindbyname = await this.hospitalModel.findByName(name);
+
+    if (hospitalFindbyname) {
+      throw new Error(
+        '이 병원명은 현재 사용중입니다. 다른 병원명을 입력해 주세요.'
       );
     }
 
@@ -140,6 +148,14 @@ class HospitalService {
     return hospital;
   }
 
+  async findHospitalByName(hospitalName: string): Promise<HospitalInfo> {
+    // 객체 destructuring
+
+    const hospital = await this.hospitalModel.findByName(hospitalName);
+
+    return hospital;
+  }
+
   async updateRefreshToken({
     hospitalId,
     update,
@@ -185,11 +201,21 @@ class HospitalService {
     // 이제 업데이트 시작
 
     // 비밀번호도 변경하는 경우에는 해쉬화 해주어야 함.
-    const { password } = toUpdate;
+    const { password, name } = toUpdate;
 
     if (password) {
       const newPasswordHash = await bcrypt.hash(password!, 10);
       toUpdate.password = newPasswordHash;
+    }
+
+    if (name) {
+      const hospitalFindbyname = await this.hospitalModel.findByName(name);
+
+      if (hospitalFindbyname) {
+        throw new Error(
+          '이 병원명은 현재 사용중입니다. 다른 병원명을 입력해 주세요.'
+        );
+      }
     }
 
     // 업데이트 진행

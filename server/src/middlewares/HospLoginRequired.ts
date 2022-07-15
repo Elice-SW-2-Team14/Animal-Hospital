@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import jwt_decode from 'jwt-decode';
 import { hospitalService } from '../services';
 
-async function HosLoginRequired(
+async function HospLoginRequired(
   req: Request,
   res: Response,
   next: NextFunction
@@ -86,6 +86,8 @@ async function HosLoginRequired(
         });
 
         req.currentHospId = hospital._id.toString();
+        req.currentHospObjectId = hospital._id;
+        req.currentHospName = hospital.name;
       }
 
       //  access token 만료 X
@@ -103,6 +105,8 @@ async function HosLoginRequired(
 
       const hospId = hospital._id;
       req.currentHospId = hospId.toString();
+      req.currentHospObjectId = hospId;
+      req.currentHospName = hospital.name;
 
       const hospRefreshToken = hospital.refreshToken as string;
 
@@ -148,4 +152,4 @@ function verifyToken(token: string): string | JwtPayload {
   return result;
 }
 
-export { HosLoginRequired };
+export { HospLoginRequired };

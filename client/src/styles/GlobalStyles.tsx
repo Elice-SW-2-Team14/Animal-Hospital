@@ -16,8 +16,8 @@ export const GlobalStyle = createGlobalStyle`
     font-weight: bold;
   };
   h3{
-     font-size: 1.17em;
-     font-weight: bold;
+    font-size: 1.17em;
+    font-weight: bold;
   };
   a {
     text-decoration: none;

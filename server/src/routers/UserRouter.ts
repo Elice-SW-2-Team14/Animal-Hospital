@@ -3,7 +3,8 @@ import * as _ from 'lodash'; //npm install --save @types/lodash
 
 import { userService } from '../services';
 import { UserAddress } from '../db';
-import { loginRequired } from '../middlewares/LoginRequired';
+import { loginRequired, checkStatus } from '../middlewares';
+import { adminOnly } from '../middlewares';
 const userRouter = Router();
 
 //회원가입
@@ -66,7 +67,7 @@ userRouter.post(
 
 //로그인
 userRouter.post(
-  '/login',
+  '/login',checkStatus,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (_.isEmpty(req.body)) {
@@ -80,8 +81,9 @@ userRouter.post(
 
       const userToken = await userService.getUserToken({ email, password });
 
-      console.log(userToken);
+  
       res.status(201).json({ userToken }); //userId, role, userStatus
+
     } catch (error) {
       next(error);
     }
@@ -127,6 +129,15 @@ userRouter.patch('/users/:userEmail', loginRequired, async (req, res, next) => {
         throw new Error(req.body.currentPassword);
       }
 
+      if(password) {
+        const regixPW =
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%#?&])[A-Za-z\d@$!%*#?&]{8,20}/;
+      if (!regixPW.test(password)) {
+        throw new Error('비밀번호 규칙을 다시 한 번 확인해주세요.');
+      }
+      }
+    
+
       const userInfoRequired = { email, currentPassword };
 
       const toUpdate = {
@@ -153,23 +164,33 @@ userRouter.patch('/users/:userEmail', loginRequired, async (req, res, next) => {
   }
 });
 
-//일반회원 개인정보 수정시 비밀번호 일치 확인 팝업
-userRouter.post('/users/:userId/checkPW', loginRequired, (req, res, next) => {
-  try {
-    if (_.isEmpty(req.body)) {
-      throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요'
-      );
+// 관리자의 일반 회원 전체 조회
+userRouter.get('/userlist', adminOnly, async (req,res,next)=>{
+    try {
+        const users = await userService.getUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        next(error)
     }
+})
 
-    const userId = req.params.userId;
-    const password = req.body.password;
+// 일반 회원 탈퇴 
+userRouter.patch('/expiration', loginRequired, async(req,res,next)=>{
+  try {
+    
+    const userStatus = req.userStatus;
+    const userId = req.currentUserId;
 
-    const isTrue = userService.checkUserPassword;
+    const statusInfoRequired = {userId, userStatus};
 
-    return isTrue;
+    const updatedStatus = await userService.setStatus(statusInfoRequired);
+
+    res.status(200).json(updatedStatus);
+
+
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
+
 export { userRouter };

@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema } from 'mongoose';
 
 const HospServiceSchema = new Schema(
   {
@@ -8,14 +8,14 @@ const HospServiceSchema = new Schema(
     },
     hospital: {
       type: Schema.Types.ObjectId,
-      ref: "hospitals",
+      ref: 'hospitals',
       required: true,
     },
     price: {
       type: Number,
       required: true,
     },
-    ServiceCapacity: {
+    serviceCapacity: {
       type: Number,
       required: true,
     },
@@ -25,7 +25,7 @@ const HospServiceSchema = new Schema(
     },
   },
   {
-    collection: "hospService",
+    collection: 'hospService',
     timestamps: true,
   }
 );

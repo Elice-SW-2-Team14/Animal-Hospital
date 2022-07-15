@@ -48,12 +48,14 @@ const UserSchema = new Schema (
 
         role : {
             type : String,
-            required : true
+            required : true,
+            default : "basic-user"
         },
                
         userStatus : {
             type : String,
-            required : true
+            required : true,
+            default : "normal"
         }
         
   

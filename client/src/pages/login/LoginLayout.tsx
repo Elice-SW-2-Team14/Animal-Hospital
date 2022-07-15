@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   LoginWrapper,
@@ -10,9 +10,9 @@ import {
   PasswordInput,
   UserCheckBox,
   UserInput,
-} from './LoginStyle';
+} from "./LoginStyle";
 
-import { CustomAxiosPost } from '../../common/CustomAxios';
+import { CustomAxiosPost } from "../../common/CustomAxios";
 
 type LoginState = {
   email: string;
@@ -22,8 +22,8 @@ type LoginState = {
 function LoginLayout() {
   const [isCheckUser, setIsCheckUser] = useState<boolean>(false);
   const [logins, setLogins] = useState<LoginState>({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   // 비구조화 할당으로 email , password 값을 추출한다.
@@ -43,22 +43,22 @@ function LoginLayout() {
     // 만일 병원 유저가 체크가 안되어있다면
     if (!isCheckUser) {
       try {
-        const result = await CustomAxiosPost.post('/api/login', logins);
+        const result = await CustomAxiosPost.post("/api/login", logins);
         const token: string = result.data.userToken.token;
         // 만일 토큰이 존재하면 로그인에 성공한거니까 access 토큰을 storage에 저장한후에 로그인 성공 메시지 남기고 페이지 이동
         if (token) {
-          localStorage.stetItem('token', token);
-          alert('로그인 성공하셨습니다.');
-          window.location.href = '/';
+          localStorage.setItem("token", token);
+          alert("로그인 성공하셨습니다.");
+          window.location.href = "/";
         }
       } catch (e) {
         console.log(e);
-        alert('아이디 또는 비밀번호 오류입니다.');
+        alert("아이디 또는 비밀번호 오류입니다.");
       }
     } else {
       try {
         const hospitalUser = await CustomAxiosPost.post(
-          '/hospital/login',
+          "/hospital/login",
           logins
         );
         const hospitalName = hospitalUser.data.data.hospitalName;
@@ -106,14 +106,14 @@ function LoginLayout() {
           onClick={handleLoginChecked}
           variant="contained"
           type="submit"
-          sx={{ mb: 1, bgcolor: '#F87474' }}
+          sx={{ mb: 1, bgcolor: "#F87474" }}
         >
           로그인
         </LoginButton>
         <KakaoButton
           variant="contained"
           type="submit"
-          sx={{ mb: 1, bgcolor: '#fae100', color: 'black' }}
+          sx={{ mb: 1, bgcolor: "#fae100", color: "black" }}
         >
           카카오 로그인
         </KakaoButton>

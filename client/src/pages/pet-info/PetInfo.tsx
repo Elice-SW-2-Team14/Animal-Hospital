@@ -8,7 +8,7 @@ import { theme } from '../../styles/Colors';
 const { Title } = Typography;
 
 type PetCard = {
-  image: string,
+  // image: string,
   name: string,
   age: number,
   sex: string,
@@ -20,31 +20,68 @@ type PetCard = {
   neutralized: string
 }
 
-PetCard.defaultProps = {
-  name: '두식이',
-  age: 3,
+// 임시 데이터 (api 추가 후 삭제 예정)
+const jsonData = {
+  "name": '두식이',
+  "age": 3,
   image: 'https://cdn.imweb.me/upload/S201712205a3a0910b89f5/d95b7faed6d64.jpg',
+  "sex": 'F',
+  "weight": 10.0,
+  "species": '',
+  "breed": '',
+  "medicalHistory": '없음',
+  "vaccination": '모름',
+  "neutralized": '',
+}
+
+PetCard.defaultProps = {
+  name: '',
+  age: 0,
+  image: '',
   sex: '',
-  weight: 10.0,
+  weight: 0.0,
   species: '',
   breed: '',
-  medicalHistory: '없음',
-  vaccination: '모름',
+  medicalHistory: '',
+  vaccination: '',
   neutralized: '',
 }
 
 export default function PetCard({
-  name, age, image, weight, species, breed, vaccination, medicalHistory, neutralized
+  name, age, weight, species, breed, vaccination, medicalHistory, neutralized
 }: PetCard) {
 
+  /* states */
   const [petList, setPetList] = useState([
     {pets: "두식이"}
   ]);
   const [index, setIndex] = useState<number>(1);
 
+  // const [name, setName] = useState(jsonData.name);
+  // const [age, setAge] = useState(jsonData.age);
+  const [image, setImage] = useState('');
+  // const [sex, setSex] = useState(jsonData.age);
+  // const [weight, setWeight] = useState(jsonData.age);
+  // const [species, setSpecies] = useState(jsonData.age);
+  // const [breed, setBreed] = useState(jsonData.age);
+  
   const selectDivHandler = (event: React.MouseEvent<HTMLDivElement>) => {
     console.log('반려동물 선택 클릭, idx:', index);
     // setIndex(idx);
+  };
+
+  /* image converter */
+  const convertFileToBase64 = (file: any) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    return new Promise((resolve: any) => {
+      if (reader) {
+        reader.onload = () => {
+        setImage(reader.result as string);
+        resolve();
+        };
+      }
+    });
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -90,7 +127,7 @@ export default function PetCard({
             borderColor: `${theme.palette.orange}`,
             borderWidth: "7px",
             borderRadius: "100%",
-            backgroundImage: "url(https://cdn.imweb.me/upload/S201712205a3a0910b89f5/d95b7faed6d64.jpg)",
+            backgroundImage: `url(${image})`,
             backgroundSize: "200px",
             backgroundPosition: "center",
             cursor: "pointer"
@@ -110,7 +147,6 @@ export default function PetCard({
             borderColor: `${theme.palette.blue}`,
             borderWidth: "7px",
             borderRadius: "100%",
-            backgroundImage: `url("./plus.png")`,
             alignItems: "center",
             justifyContent: "flex-start"
           }}
@@ -189,18 +225,25 @@ export default function PetCard({
         <div>
           <SubTitle>사진</SubTitle>
           <div style={{ marginBottom: "0.5rem" }} />
+          <div style={{ marginBottom: "0.5rem" }}>
+            <UploadFileLabel htmlFor="uploadFile">업로드</UploadFileLabel>
+            <UploadFileInput type="file"
+              id="uploadFile"
+              accept='image/jpg,image/png,image/jpeg,image/gif'
+              name='profile_img'
+              onChange={(e: any) => {
+                convertFileToBase64(e.target.files[0]);
+                console.log(e.target.files);
+                setImage(e.target.files);
+              }}
+            />
+          </div>
           <div>
             <img
               src={image}
               width="280px"
               alt=""
             />
-            <Button
-              style={{
-                marginLeft: "0.5rem"
-              }}
-              onSubmit={onSubmit}
-            >수정</Button>
           </div>
         </div>
         <div style={{ marginBottom: "1rem" }} />
@@ -308,4 +351,30 @@ export default function PetCard({
 
 const SubTitle = styled.span`
   font-size: 16px;
+`
+
+/* 사진 추가 css */
+
+const UploadFileLabel = styled.label`
+  display: inline-block;
+  padding: .5em .8em;
+  font-size: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid ${theme.palette.lightgray};
+  border-radius: .25em;
+
+  :hover {
+    transition: 2ms ease-in;
+    border-color: ${theme.palette.blue};
+    color: ${theme.palette.blue};
+  }
+`
+const UploadFileInput = styled.input`
+  position: absolute;
+  padding: 0;
+  margin: -1px;
+  clip:rect(0,0,0,0);
+  border: 0;
 `

@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import * as _ from 'lodash';
-import { hospitalService } from '../services';
-import { HosLoginRequired } from '../middlewares';
+import { hospitalService, hospServiceService } from '../services';
+import { HospLoginRequired, onlyHospOwner } from '../middlewares';
+import { upload } from '../utils';
+import mongoose, { model } from 'mongoose';
 
 const hospitalRouter = Router();
 
@@ -160,80 +162,269 @@ hospitalRouter.post('/login', async function (req, res, next) {
   }
 });
 
-hospitalRouter.patch('/', HosLoginRequired, async (req, res, next) => {
-  try {
-    // content-type 을 application/json 로 프론트에서
-    // 설정 안 하고 요청하면, body가 비어 있게 됨.
-    if (_.isEmpty(req.body)) {
-      throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요'
-      );
-    }
-
-    // body data 로부터 업데이트할 사용자 정보를 추출함.
-
-    const {
-      name,
-      director,
-      password,
-      address,
-      phoneNumber,
-      businessNumber,
-      businessHours,
-      holiday,
-      hospitalCapacity,
-      tag,
-      keyword,
-      image,
-    } = req.body;
-
-    if (password) {
-      let regexPassword =
-        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/;
-      if (!regexPassword.test(password)) {
-        throw new Error('비밀번호 형식이 올바르지 않습니다.');
+hospitalRouter.patch(
+  '/',
+  HospLoginRequired,
+  upload.single('image'),
+  async (req, res, next) => {
+    try {
+      // content-type 을 application/json 로 프론트에서
+      // 설정 안 하고 요청하면, body가 비어 있게 됨.
+      let image = '';
+      if (req.file) {
+        image = (req.file as Express.MulterS3.File).location;
+      } else {
+        if (_.isEmpty(req.body)) {
+          throw new Error(
+            'headers의 Content-Type을 application/json으로 설정해주세요'
+          );
+        }
       }
+
+      // body data 로부터 업데이트할 사용자 정보를 추출함.
+
+      const {
+        name,
+        director,
+        password,
+        address,
+        phoneNumber,
+        businessNumber,
+        businessHours,
+        holiday,
+        hospitalCapacity,
+        tag,
+        keyword,
+      } = req.body;
+
+      if (password) {
+        let regexPassword =
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/;
+        if (!regexPassword.test(password)) {
+          throw new Error('비밀번호 형식이 올바르지 않습니다.');
+        }
+      }
+
+      // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
+      const currentPassword = req.body.currentPassword;
+
+      // currentPassword 없을 시, 진행 불가
+      if (!currentPassword) {
+        throw new Error('정보를 변경하려면, 현재의 비밀번호가 필요합니다.');
+      }
+
+      const hospitalId = req.currentHospId;
+
+      const hospitalInfoRequired = { hospitalId, currentPassword };
+
+      // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
+      // 보내주었다면, 업데이트용 객체에 삽입함.
+      const toUpdate = {
+        ...(name && { name }),
+        ...(director && { director }),
+        ...(password && { password }),
+        ...(address && { address }),
+        ...(phoneNumber && { phoneNumber }),
+        ...(businessHours && { businessHours }),
+        ...(businessNumber && { businessNumber }),
+        ...(holiday && { holiday }),
+        ...(hospitalCapacity && { hospitalCapacity }),
+        ...(tag && { tag }),
+        ...(keyword && { keyword }),
+        ...(image && { image }),
+      };
+
+      // 사용자 정보를 업데이트함.
+      const updatedHospInfo = await hospitalService.setHospitalInfo(
+        hospitalInfoRequired,
+        toUpdate
+      );
+
+      res.status(200).json({
+        data: { updatedHospInfo: updatedHospInfo },
+        message: '수정되었습니다.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+hospitalRouter.patch(
+  '/hospital-status',
+  HospLoginRequired,
+  async (req, res, next) => {
+    try {
+      if (_.isEmpty(req.body)) {
+        throw new Error(
+          'headers의 Content-Type을 application/json으로 설정해주세요'
+        );
+      }
+
+      // body data 로부터 업데이트할 사용자 정보를 추출함.
+
+      const { currentPassword } = req.body;
+
+      // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
+
+      // currentPassword 없을 시, 진행 불가
+      if (!currentPassword) {
+        throw new Error('탈퇴할려면, 현재의 비밀번호가 필요합니다.');
+      }
+
+      const hospitalId = req.currentHospId;
+
+      const hospitalInfoRequired = { hospitalId, currentPassword };
+
+      // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
+      // 보내주었다면, 업데이트용 객체에 삽입함.
+      const toUpdate = {
+        hospStatus: new mongoose.Types.ObjectId('62cbe26a0a094d23799511f3'),
+      };
+
+      // 사용자 정보를 업데이트함.
+      const deleteHospInfo = await hospitalService.setHospitalInfo(
+        hospitalInfoRequired,
+        toUpdate
+      );
+
+      res.status(200).json({
+        data: { deleteHospInfo: deleteHospInfo },
+        message: '탈퇴하였습니다.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+hospitalRouter.get('/:hospitalName/Services', async (req, res, next) => {
+  try {
+    const { hospitalName } = req.params;
+    const hospital = await hospitalService.findHospitalByName(hospitalName);
+
+    if (!hospital) {
+      throw new Error('찾고자 하는 병원이 없습니다.');
     }
 
-    // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
-    const currentPassword = req.body.currentPassword;
+    const hospitalId = hospital._id;
 
-    // currentPassword 없을 시, 진행 불가
-    if (!currentPassword) {
-      throw new Error('정보를 변경하려면, 현재의 비밀번호가 필요합니다.');
-    }
-
-    const hospitalId = req.currentHospId;
-
-    const hospitalInfoRequired = { hospitalId, currentPassword };
-
-    // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
-    // 보내주었다면, 업데이트용 객체에 삽입함.
-    const toUpdate = {
-      ...(name && { name }),
-      ...(director && { director }),
-      ...(password && { password }),
-      ...(address && { address }),
-      ...(phoneNumber && { phoneNumber }),
-      ...(businessHours && { businessHours }),
-      ...(businessNumber && { businessNumber }),
-      ...(holiday && { holiday }),
-      ...(hospitalCapacity && { hospitalCapacity }),
-      ...(tag && { tag }),
-      ...(keyword && { keyword }),
-      ...(image && { image }),
-    };
-
-    // 사용자 정보를 업데이트함.
-    const updatedUserInfo = await hospitalService.setHospitalInfo(
-      hospitalInfoRequired,
-      toUpdate
-    );
-
-    res.status(200).json(updatedUserInfo);
+    const hospServices = await hospServiceService.findAll(hospitalId);
+    res.status(200).json({ data: { hospServices: hospServices }, message: '' });
   } catch (error) {
     next(error);
   }
 });
+
+hospitalRouter.get(
+  '/:hospitalName/Services/:hospServiceId',
+  async (req, res, next) => {
+    try {
+      const { hospServiceId, hospitalName } = req.params;
+
+      const hospital = await hospitalService.findHospitalByName(hospitalName);
+
+      if (!hospital) {
+        throw new Error('찾고자 하는 병원이 없습니다.');
+      }
+
+      const hospService = await hospServiceService.findById(hospServiceId);
+      res.status(200).json({ data: { hospService: hospService }, message: '' });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+hospitalRouter.post(
+  '/:hospitalName/Service',
+  HospLoginRequired,
+  onlyHospOwner,
+  async (req, res, next) => {
+    try {
+      // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
+      if (_.isEmpty(req.body)) {
+        throw new Error(
+          'headers의 Content-Type을 application/json으로 설정해주세요'
+        );
+      }
+
+      const { name, price, serviceCapacity, desc } = req.body;
+
+      const createHospServiceData = {
+        name: name,
+        price: price,
+        serviceCapacity: serviceCapacity,
+        desc: desc,
+        hospital: req.currentHospObjectId,
+      };
+      const newhospService = await hospServiceService.create(
+        createHospServiceData
+      );
+      res.status(201).json({
+        data: { hospitalService: newhospService },
+        message: '생성되었습니다.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+hospitalRouter.patch(
+  '/:hospitalName/Services/:hospServiceId',
+  HospLoginRequired,
+  onlyHospOwner,
+  async (req, res, next) => {
+    try {
+      // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
+      if (_.isEmpty(req.body)) {
+        throw new Error(
+          'headers의 Content-Type을 application/json으로 설정해주세요'
+        );
+      }
+      const { hospServiceId } = req.params;
+      const { name, price, serviceCapacity, desc } = req.body;
+
+      const toUpdate = {
+        ...(name && { name }),
+        ...(price && { price }),
+        ...(serviceCapacity && { serviceCapacity }),
+        ...(desc && { desc }),
+      };
+
+      console.log(toUpdate);
+
+      const updateHospService = await hospServiceService.update({
+        hospServiceId,
+        update: toUpdate,
+      });
+
+      res.status(201).json({
+        data: { hospitalService: updateHospService },
+        message: '수정되었습니다.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+hospitalRouter.delete(
+  '/:hospitalName/Services/:hospServiceId',
+  HospLoginRequired,
+  onlyHospOwner,
+  async (req, res, next) => {
+    try {
+      const { hospServiceId } = req.params;
+      const deleteHospService = await hospServiceService.deleteById(
+        hospServiceId
+      );
+      res.status(201).json({ data: {}, message: deleteHospService });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export { hospitalRouter };

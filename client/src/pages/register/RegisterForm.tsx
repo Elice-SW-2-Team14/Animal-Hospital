@@ -54,6 +54,8 @@ interface ICommonData {
 
 interface IUserData extends ICommonData {
   userName: string,
+  role: string,
+  userStatus: string,
 }
 
 interface IHospData extends ICommonData {
@@ -112,7 +114,7 @@ const RegisterForm: React.FC<Props> = ({isHospital}) => {
           phoneNumber: phone,
           businessNumber,
           licenseNumber,
-          address
+          address,
         }
 
         try {
@@ -136,6 +138,8 @@ const RegisterForm: React.FC<Props> = ({isHospital}) => {
           password,
           phoneNumber: phone,
           address,
+          role: 'basic-user',
+          userStatus: 'normal',
         }
 
         try {

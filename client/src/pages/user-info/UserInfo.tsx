@@ -25,7 +25,7 @@ function UserInfo() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [addr, setAddr] = useState<Address>();
   // 비밀번호 관련
-  const pwRef = useRef<HTMLInputElement>(null);
+  const currentPwRef = useRef<HTMLInputElement>(null);
   const newPwRef = useRef<HTMLInputElement>(null);
 
   // 처음 한 번만 서버 통신
@@ -81,11 +81,25 @@ function UserInfo() {
 
   const onhandleUpadate = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    const data = { ...userInfo, address: addr };
+    const currentPassword = currentPwRef.current?.value;
+    const newPassword = newPwRef.current?.value;
+    const data = {
+      ...userInfo,
+      address: addr,
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    };
     console.log(data);
-    // axios.patch(`http://localhost:5100/api/users/${userInfo?.email}`);
+    axios
+      .patch(`http://localhost:5100/api/users/${userInfo?.email}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      });
   };
-
   return (
     <MainContainer>
       <Title>개인정보</Title>
@@ -133,8 +147,8 @@ function UserInfo() {
         </Container>
         <Container>
           <InputLabel>비밀번호</InputLabel>
-          <InfoInput name="password" placeholder="새 비밀번호" />
-          <InfoInput name="password" placeholder="현재 비밀번호" />
+          <InfoInput ref={newPwRef} placeholder="새 비밀번호" />
+          <InfoInput ref={currentPwRef} placeholder="현재 비밀번호" />
         </Container>
 
         <div style={{ display: "flex" }}>

@@ -85,6 +85,11 @@ export class HospitalModel {
     return hospital;
   }
 
+  async findByName(name: string): Promise<HospitalInfo> {
+    const hospital = (await Hospital.findOne({ name })) as HospitalInfo;
+    return hospital;
+  }
+
   async findById(_id: string): Promise<HospitalInfo> {
     const hospital = (await Hospital.findById(_id)) as HospitalInfo;
     return hospital;
