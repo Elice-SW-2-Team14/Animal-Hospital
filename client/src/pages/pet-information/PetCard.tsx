@@ -18,23 +18,24 @@ import {
   Contents,
 } from "./PetInfoStyle";
 const token = localStorage.getItem("token");
-function PetCard({ pet }: any) {
+function PetCard({ pet, onhandleDelete }: any) {
   const [petInfo, setPetInfo] = useState<PetInfoType>(pet);
   const [select, setSelect] = useState("F");
   // 서버 통신
-  const onhandleDelete = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    axios
-      .delete("http://localhost:5100/pet/delete", {
-        data: { petId: pet._id },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-      });
-  };
+
+  // const onhandleDelete = (event: React.MouseEvent<HTMLElement>) => {
+  //   event.preventDefault();
+  //   axios
+  //     .delete("http://localhost:5100/pet/delete", {
+  //       data: { petId: pet._id },
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //     });
+  // };
   const onChange = (
     event:
       | React.ChangeEvent<HTMLInputElement>
@@ -60,6 +61,7 @@ function PetCard({ pet }: any) {
       })
       .then((res) => {
         console.log(res);
+        // reload();
       });
   };
 
@@ -70,7 +72,11 @@ function PetCard({ pet }: any) {
   };
   return (
     <PetCardContainer>
-      <DeleteBtn onClick={onhandleDelete}>
+      <DeleteBtn
+        onClick={() => {
+          onhandleDelete(pet._id);
+        }}
+      >
         <i className="fa-solid fa-circle-minus fa-xl"></i>
       </DeleteBtn>
       <Contents>

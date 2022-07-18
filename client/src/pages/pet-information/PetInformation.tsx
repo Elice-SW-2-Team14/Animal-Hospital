@@ -9,19 +9,35 @@ const token = localStorage.getItem("token");
 function PetInformation() {
   const [pets, setPets] = useState<PetInfoType[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  // 처음 한 번만 서버 통신
+  // 처음 한 번 서버 통신
   useEffect(() => {
-    axios
-      .get("http://localhost:5100/pet/mypets", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setPets(res.data);
-        console.log(res.data);
-      });
+    reload();
   }, []);
+
+  const reload = async () => {
+    const res = await axios.get("http://localhost:5100/pet/mypets", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = res.data;
+    setPets(data);
+    console.log(data);
+  };
+
+  const onhandleDelete = async (id: string) => {
+    await axios.delete("http://localhost:5100/pet/delete", {
+      data: { petId: id },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // const newPets = [...pets];
+    // const newArr = newPets.filter((pet) => pet._id !== id);
+    // setPets(newArr);
+    reload();
+  };
+  console.log("pets", pets);
 
   return (
     <MainContainer>
@@ -32,7 +48,7 @@ function PetInformation() {
       {isOpen && <AddPet />}
       썸넬이 필요함
       {pets.map((pet, i) => (
-        <PetCard pet={pet} key={i} />
+        <PetCard pet={pet} key={i} onhandleDelete={onhandleDelete} />
       ))}
     </MainContainer>
   );

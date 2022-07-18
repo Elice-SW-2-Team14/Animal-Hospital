@@ -67,7 +67,7 @@ function AddPet() {
       .then((res) => {
         console.log(res.data);
       });
-    // formRef.current?.reset(); 저장 후 form 초기화
+    formRef.current?.reset(); // 저장 후 form 초기화
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
