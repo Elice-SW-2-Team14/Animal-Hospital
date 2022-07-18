@@ -22,6 +22,7 @@ function PetInformation() {
         console.log(res.data);
       });
   }, []);
+
   return (
     <MainContainer>
       <h1>pet info</h1>
@@ -30,8 +31,8 @@ function PetInformation() {
       </AddBtn>
       {isOpen && <AddPet />}
       썸넬이 필요함
-      {pets.map((pet) => (
-        <PetCard pet={pet} />
+      {pets.map((pet, i) => (
+        <PetCard pet={pet} key={i} />
       ))}
     </MainContainer>
   );
