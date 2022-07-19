@@ -127,7 +127,7 @@ function AddPet() {
             <Item>
               <RadioButton
                 type="radio"
-                name="gender"
+                name="neutralized"
                 value="완료"
                 checked={neut === "완료"}
                 onChange={onhandleNeut}
@@ -138,7 +138,7 @@ function AddPet() {
             <Item>
               <RadioButton
                 type="radio"
-                name="gender"
+                name="neutralized"
                 value="미완료"
                 checked={neut === "미완료"}
                 onChange={onhandleNeut}
@@ -149,7 +149,7 @@ function AddPet() {
             <Item>
               <RadioButton
                 type="radio"
-                name="gender"
+                name="neutralized"
                 value="모름"
                 checked={neut === "모름"}
                 onChange={onhandleNeut}
