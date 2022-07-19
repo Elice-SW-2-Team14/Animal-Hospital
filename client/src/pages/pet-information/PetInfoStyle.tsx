@@ -102,3 +102,17 @@ export const RadioText = styled.p`
   font-size: 0.9rem;
   margin-left: 0.4rem;
 `;
+
+////
+export const Container = styled.form`
+  padding: 1rem;
+  border: 2px solid ${(props) => props.theme.palette.lightgray};
+`;
+export const AddInput = styled(InfoInput)`
+  font-size: 0.9rem;
+  border-bottom: 1px solid ${(props) => props.theme.palette.lightgray};
+`;
+export const AddTextarea = styled(InfoTextarea)`
+  font-size: 0.9rem;
+  border-bottom: 1px solid ${(props) => props.theme.palette.lightgray};
+`;

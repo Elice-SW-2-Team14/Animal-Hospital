@@ -3,37 +3,29 @@ import styled from "styled-components";
 import axios from "axios";
 import ImgUploader from "../../components/ImgUploader";
 import {
-  PetCardContainer,
-  DeleteBtn,
+  // PetCardContainer,
+  // DeleteBtn,
   ImgContainer,
   InfoContainer,
-  InfoInput,
-  InfoTextarea,
-  NameInput,
+  // InfoInput,
+  // InfoTextarea,
+  // NameInput,
   RadioButton,
   RadioButtonLabel,
   RadioContainer,
   RadioText,
   Item,
-  PetImg,
+  // PetImg,
   Contents,
+  Container,
+  AddInput,
+  AddTextarea,
 } from "./PetInfoStyle";
-const Container = styled.form`
-  padding: 1rem;
-  border: 2px solid ${(props) => props.theme.palette.lightgray};
-`;
-const AddInput = styled(InfoInput)`
-  font-size: 0.9rem;
-  border-bottom: 1px solid ${(props) => props.theme.palette.lightgray};
-`;
-const AddTextarea = styled(InfoTextarea)`
-  font-size: 0.9rem;
-  border-bottom: 1px solid ${(props) => props.theme.palette.lightgray};
-`;
 
 const token = localStorage.getItem("token");
 function AddPet() {
-  const [select, setSelect] = useState("F");
+  const [gender, setGender] = useState<string>();
+  const [neut, setNeut] = useState<string>();
   const [img, setImg] = useState();
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -54,25 +46,32 @@ function AddPet() {
       breed: breedRef.current?.value,
       medicalHistory: medicalHistoryRef.current?.value,
       vaccination: vaccinationRef.current?.value,
-      sex: "F",
-      // neutralized: ageRef.current?.value,
+      sex: gender,
+      neutralized: neut,
     };
     console.log(data);
-    axios
-      .post("http://localhost:5100/pet/register", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-      });
-    formRef.current?.reset(); // 저장 후 form 초기화
+    // axios
+    //   .post("http://localhost:5100/pet/register", data, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //   });
+    // formRef.current?.reset(); // 저장 후 form 초기화
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onhandleGender = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setSelect(value);
+    console.log(value);
+
+    setGender(value);
+  };
+  const onhandleNeut = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    console.log(value);
+    setNeut(value);
   };
   const updateImg = ({ newImgs }: any) => {
     setImg(newImgs);
@@ -101,8 +100,8 @@ function AddPet() {
                 type="radio"
                 name="gender"
                 value="F"
-                checked={select === "F"}
-                onChange={(event) => handleSelectChange(event)}
+                checked={gender === "F"}
+                onChange={onhandleGender}
               />
               <RadioButtonLabel />
               <RadioText>F</RadioText>
@@ -112,8 +111,8 @@ function AddPet() {
                 type="radio"
                 name="gender"
                 value="M"
-                checked={select === "M"}
-                onChange={(event) => handleSelectChange(event)}
+                checked={gender === "M"}
+                onChange={onhandleGender}
               />
               <RadioButtonLabel />
               <RadioText>M</RadioText>
@@ -130,8 +129,8 @@ function AddPet() {
                 type="radio"
                 name="gender"
                 value="완료"
-                checked={select === "완료"}
-                onChange={(event) => handleSelectChange(event)}
+                checked={neut === "완료"}
+                onChange={onhandleNeut}
               />
               <RadioButtonLabel />
               <RadioText>완료</RadioText>
@@ -141,8 +140,8 @@ function AddPet() {
                 type="radio"
                 name="gender"
                 value="미완료"
-                checked={select === "미완료"}
-                onChange={(event) => handleSelectChange(event)}
+                checked={neut === "미완료"}
+                onChange={onhandleNeut}
               />
               <RadioButtonLabel />
               <RadioText>미완료</RadioText>
@@ -152,8 +151,8 @@ function AddPet() {
                 type="radio"
                 name="gender"
                 value="모름"
-                checked={select === "모름"}
-                onChange={(event) => handleSelectChange(event)}
+                checked={neut === "모름"}
+                onChange={onhandleNeut}
               />
               <RadioButtonLabel />
               <RadioText>모름</RadioText>

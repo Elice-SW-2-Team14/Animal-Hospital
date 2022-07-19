@@ -18,23 +18,10 @@ import {
   Contents,
 } from "./PetInfoStyle";
 const token = localStorage.getItem("token");
-function PetCard({ pet }: any) {
+function PetCard({ pet, onhandleDelete }: any) {
   const [petInfo, setPetInfo] = useState<PetInfoType>(pet);
-  const [select, setSelect] = useState("F");
-  // 서버 통신
-  const onhandleDelete = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    axios
-      .delete("http://localhost:5100/pet/delete", {
-        data: { petId: pet._id },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-      });
-  };
+  const [gender, setGender] = useState(pet.sex);
+  const [neut, setNeut] = useState(pet.neutralized);
 
   const onChange = (
     event:
@@ -47,32 +34,40 @@ function PetCard({ pet }: any) {
       petId: pet._id,
       [event.currentTarget.name]: event.currentTarget.value,
     };
-    console.log(data);
     setPetInfo(data);
   };
 
   const onhandleUpdate = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
+    const data = { ...petInfo, petId: pet._id };
+
     axios
-      .patch(`http://localhost:5100/pet/update`, petInfo, {
+      .patch(`http://localhost:5100/pet/update`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
         console.log(res);
-        // reload();
       });
   };
 
   // radio 관련
-  const handleSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onhandleGender = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setSelect(value);
+    setGender(value);
+  };
+  const onhandleNeut = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setNeut(value);
   };
   return (
     <PetCardContainer>
-      <DeleteBtn onClick={onhandleDelete}>
+      <DeleteBtn
+        onClick={() => {
+          onhandleDelete(pet._id);
+        }}
+      >
         <i className="fa-solid fa-circle-minus fa-xl"></i>
       </DeleteBtn>
       <Contents>
@@ -101,8 +96,8 @@ function PetCard({ pet }: any) {
                   type="radio"
                   name="gender"
                   value="F"
-                  checked={select === "F"}
-                  onChange={(event) => handleSelectChange(event)}
+                  checked={gender === "F"}
+                  onChange={(event) => onhandleGender(event)}
                 />
                 <RadioButtonLabel />
                 <RadioText>F</RadioText>
@@ -112,8 +107,8 @@ function PetCard({ pet }: any) {
                   type="radio"
                   name="gender"
                   value="M"
-                  checked={select === "M"}
-                  onChange={(event) => handleSelectChange(event)}
+                  checked={gender === "M"}
+                  onChange={(event) => onhandleGender(event)}
                 />
                 <RadioButtonLabel />
                 <RadioText>M</RadioText>
@@ -130,8 +125,8 @@ function PetCard({ pet }: any) {
                   type="radio"
                   name="gender"
                   value="완료"
-                  checked={select === "완료"}
-                  onChange={(event) => handleSelectChange(event)}
+                  checked={neut === "완료"}
+                  onChange={(event) => onhandleNeut(event)}
                 />
                 <RadioButtonLabel />
                 <RadioText>완료</RadioText>
@@ -141,8 +136,8 @@ function PetCard({ pet }: any) {
                   type="radio"
                   name="gender"
                   value="미완료"
-                  checked={select === "미완료"}
-                  onChange={(event) => handleSelectChange(event)}
+                  checked={neut === "미완료"}
+                  onChange={(event) => onhandleNeut(event)}
                 />
                 <RadioButtonLabel />
                 <RadioText>미완료</RadioText>
@@ -152,8 +147,8 @@ function PetCard({ pet }: any) {
                   type="radio"
                   name="gender"
                   value="모름"
-                  checked={select === "모름"}
-                  onChange={(event) => handleSelectChange(event)}
+                  checked={neut === "모름"}
+                  onChange={(event) => onhandleNeut(event)}
                 />
                 <RadioButtonLabel />
                 <RadioText>모름</RadioText>
@@ -171,7 +166,6 @@ function PetCard({ pet }: any) {
             value={petInfo.vaccination}
           />
           <button onClick={onhandleUpdate}>
-            {" "}
             <i className="fa-solid fa-paw"></i>저장
           </button>
           {/* <Btn>
