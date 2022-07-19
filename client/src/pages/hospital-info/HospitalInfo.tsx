@@ -1,10 +1,12 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from "react";
 import "antd/dist/antd.min.css";
-import { Button, Form, Input, Typography, Row, Col} from "antd";import { theme } from '../../styles/Colors';
-import { SubTitle,
+import { Button, Form, Input, Typography, Row, Col } from "antd";
+import { theme } from "../../styles/Colors";
+import {
+  SubTitle,
   UploadFileLabel,
   UploadFileInput,
-  KeywordInput
+  KeywordInput,
 } from "./Style";
 import { HospitalInfoType, HospitalServiceInfoType } from "./Interface";
 import axios from "axios";
@@ -33,32 +35,58 @@ export default function HospitalInfo() {
   // office hour: validation 시 e.target.value를 바로 비교하면 밀리지 않게 바로바로 비교 가능
 
   /* elements */
-  const $HashWrapOuter = document.querySelector('.HashWrapOuter');
-  const $HashWrapInner = document.createElement('div');
-  $HashWrapInner.className = 'HashWrapInner';
-  const $keywordNumWarning = document.querySelector('.keywordNumWarning');
+  const $HashWrapOuter = document.querySelector(".HashWrapOuter");
+  const $HashWrapInner = document.createElement("div");
+  $HashWrapInner.className = "HashWrapInner";
+  const $keywordNumWarning = document.querySelector(".keywordNumWarning");
 
   /* states */
   const [hospitalInfo, setHospitalInfo] = useState<HospitalInfoType>();
-  const [hospitalServiceInfo, setHospitalServiceInfo] = useState<HospitalServiceInfoType>();
-  const [image, setImage] = useState('');
-  const [keyword, setKeyword] = useState(['']);
-  const [newKeyword, setNewKeyword] = useState('');
+  const [hospitalServiceInfo, setHospitalServiceInfo] =
+    useState<HospitalServiceInfoType>();
+  const [image, setImage] = useState("");
+  const [keyword, setKeyword] = useState([""]);
+  const [newKeyword, setNewKeyword] = useState("");
   // const [serviceName, setServiceName] = useState("");
   // const [servicePrice, setServicePrice] = useState(-999);
   // const [serviceDesc, setServiceDesc] = useState("");
   // const [serviceCapacity, setServiceCapacity] = useState(-999);
 
   /* values */
-  const timeList = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
-  
+  const timeList = [
+    "00",
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+  ];
+
   // const { postalCode, address1, address2 } = jsonData.address;
   // const email = jsonData.email;
 
   /* constants */
   const AVAILABLE_KEYWORD_LENGTH = 10;
   const AVAILABLE_KEYWORD_COUNTS = 3;
-  
+
   /* image converter */
   const convertFileToBase64 = (file: any) => {
     const reader = new FileReader();
@@ -66,8 +94,8 @@ export default function HospitalInfo() {
     return new Promise((resolve: any) => {
       if (reader) {
         reader.onload = () => {
-        setImage(reader.result as string);
-        resolve();
+          setImage(reader.result as string);
+          resolve();
         };
       }
     });
@@ -78,59 +106,70 @@ export default function HospitalInfo() {
     e.preventDefault();
     const hospitalData = {
       ...hospitalInfo,
-      [e.currentTarget.name]: e.currentTarget.value
+      [e.currentTarget.name]: e.currentTarget.value,
     };
     const hospitalServiceData = {
       ...hospitalServiceInfo,
-      [e.currentTarget.name]: e.currentTarget.value
-    }
-    setHospitalInfo(hospitalData);
-    setHospitalServiceInfo(hospitalServiceData);
+      [e.currentTarget.name]: e.currentTarget.value,
+    };
+    // setHospitalInfo(hospitalData);
+    // setHospitalServiceInfo(hospitalServiceData);
   };
 
   const onKeyUp = useCallback(
     (e: any) => {
-      
       /* 입력 시마다 입력 값 갱신 */
       setNewKeyword(e.target.value);
 
       /* 키워드 클릭 시 키워드 삭제 */
-      $HashWrapInner.addEventListener('click', () => {
-        $HashWrapOuter?.removeChild($HashWrapInner)
-        console.log($HashWrapInner.innerHTML)
-        console.log("newKeyword:", newKeyword)
-        setKeyword(keyword.filter((newKeyword: any) => newKeyword))
-      })
+      $HashWrapInner.addEventListener("click", () => {
+        $HashWrapOuter?.removeChild($HashWrapInner);
+        console.log($HashWrapInner.innerHTML);
+        console.log("newKeyword:", newKeyword);
+        setKeyword(keyword.filter((newKeyword: any) => newKeyword));
+      });
 
       /* enter's key code: 13 */
       // if (e.keyCode === 13  && e.target.value.trim() !== '') {
       if (e.keyCode === 13 && $keywordNumWarning) {
         if (newKeyword.length > AVAILABLE_KEYWORD_LENGTH) {
-          $keywordNumWarning.textContent = `키워드는 ${AVAILABLE_KEYWORD_LENGTH}글자 미만이어야 합니다.`
-        }
-        else if ($HashWrapOuter && newKeyword && keyword.length <= AVAILABLE_KEYWORD_COUNTS) {
-          $HashWrapInner.innerHTML = '#' + newKeyword;
+          $keywordNumWarning.textContent = `키워드는 ${AVAILABLE_KEYWORD_LENGTH}글자 미만이어야 합니다.`;
+        } else if (
+          $HashWrapOuter &&
+          newKeyword &&
+          keyword.length <= AVAILABLE_KEYWORD_COUNTS
+        ) {
+          $HashWrapInner.innerHTML = "#" + newKeyword;
           $HashWrapOuter.appendChild($HashWrapInner);
           let copyKeyword = [...keyword];
           copyKeyword.push(newKeyword);
           setKeyword(copyKeyword);
-          console.log("Enter Key Pressed. e.target.value:", e.target.value, "keyword:", keyword, "newKeyword:", newKeyword, "copyKeyword(이쪽 데이터를 전달할 예정):", copyKeyword);
-          $keywordNumWarning.textContent = "키워드가 정상적으로 등록되었습니다."
-          setNewKeyword('');
-          console.log("등록 이후 newKeyword", newKeyword)
-        }
-        else {
-          $keywordNumWarning.textContent = `키워드는 ${AVAILABLE_KEYWORD_COUNTS}개까지 등록 가능합니다.`
-          setNewKeyword('');
-          console.log("초과 등록 실패 이후 newKeyword", newKeyword)
+          console.log(
+            "Enter Key Pressed. e.target.value:",
+            e.target.value,
+            "keyword:",
+            keyword,
+            "newKeyword:",
+            newKeyword,
+            "copyKeyword(이쪽 데이터를 전달할 예정):",
+            copyKeyword
+          );
+          $keywordNumWarning.textContent =
+            "키워드가 정상적으로 등록되었습니다.";
+          setNewKeyword("");
+          console.log("등록 이후 newKeyword", newKeyword);
+        } else {
+          $keywordNumWarning.textContent = `키워드는 ${AVAILABLE_KEYWORD_COUNTS}개까지 등록 가능합니다.`;
+          setNewKeyword("");
+          console.log("초과 등록 실패 이후 newKeyword", newKeyword);
         }
       }
     },
     [keyword, newKeyword, $HashWrapInner, $HashWrapOuter, $keywordNumWarning]
-  )
-  
+  );
+
   /* 보낼 서비스 데이터 */
-  let serviceList:Object[] = [];
+  let serviceList: Object[] = [];
 
   // React.FormEvent<HTMLFormElement>
   const onServiceSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -139,50 +178,48 @@ export default function HospitalInfo() {
     console.log("추가된 서비스:", hospitalServiceInfo);
     // serviceList = [...serviceList, hospitalServiceInfo];
     // console.log("serviceList:", serviceList);
-  }
+  };
 
   const buttonHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    alert(
-      '버튼이 클릭되었습니다(확인용)'
-    )
+    alert("버튼이 클릭되었습니다(확인용)");
   };
-  
-  const withdrawButtonHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    alert('병원 회원 탈퇴 버튼이 클릭되었습니다(확인용)')
-  }
 
+  const withdrawButtonHandler = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    alert("병원 회원 탈퇴 버튼이 클릭되었습니다(확인용)");
+  };
 
   useEffect(() => {
     // 임시 데이터 (api 추가 후 삭제 예정)
     setHospitalInfo({
-      "name": "이이진진수수 동동물물병병원원",
-      "email": "sarangS2hospital@gmail.com",
-      "director": "이진수",
-      "password": "12345",
-      "address": {
-        "postalCode": "13477",
-        "address1": "경기 성남시 분당구 판교공원로5길 15",
-        "address2": "이진수 동물병원"
+      name: "이이진진수수 동동물물병병원원",
+      email: "sarangS2hospital@gmail.com",
+      director: "이진수",
+      password: "12345",
+      address: {
+        postalCode: "13477",
+        address1: "경기 성남시 분당구 판교공원로5길 15",
+        address2: "이진수 동물병원",
       },
-      "phoneNumber": "010-0000-0000",
-      "businessHours": "24",
-      "businessNumber": "546521354",
-      "licenseNumber": "XXXXXXXXX",
-      "holiday": [""],
-      "hospitalCapacity": 3,
-      "tag": "",
-      "keyword": ["소동물 전문"],
+      phoneNumber: "010-0000-0000",
+      businessHours: "24",
+      businessNumber: "546521354",
+      licenseNumber: "XXXXXXXXX",
+      holiday: [""],
+      hospitalCapacity: 3,
+      tag: "",
+      keyword: ["소동물 전문"],
       // "image": "https://o-oa.com/wp-content/uploads/2020/05/LJS_01.jpg",
-      "image": ""
+      image: "",
     });
-    setHospitalServiceInfo(
-    {
-      "serviceName": "중성화수술",
-      "servicePrice": 200000,
-      "serviceDesc": "지이이잉석둑",
-      "serviceCapacity": 1
+    setHospitalServiceInfo({
+      serviceName: "중성화수술",
+      servicePrice: 200000,
+      serviceDesc: "지이이잉석둑",
+      serviceCapacity: 1,
     });
   }, []);
 
@@ -197,7 +234,7 @@ export default function HospitalInfo() {
           borderColor: `${theme.palette.orange}`,
           borderWidth: "10px",
           borderRadius: "5%",
-          padding: "1rem 2rem 1rem 2rem"
+          padding: "1rem 2rem 1rem 2rem",
         }}
       >
         <Row>
@@ -209,7 +246,7 @@ export default function HospitalInfo() {
                   name="name"
                   style={{
                     marginBottom: "1rem",
-                    marginLeft: "0.5rem"
+                    marginLeft: "0.5rem",
                   }}
                   type="text"
                   defaultValue={hospitalInfo?.name || ""}
@@ -232,7 +269,7 @@ export default function HospitalInfo() {
                   name="email"
                   style={{
                     marginBottom: "1rem",
-                    marginLeft: "0.5rem"
+                    marginLeft: "0.5rem",
                   }}
                   type="text"
                   defaultValue={hospitalInfo?.email}
@@ -251,9 +288,11 @@ export default function HospitalInfo() {
                   disabled
                 />
                 <Button
-                    style={{ marginLeft: "0.5rem" }}
-                    onClick={buttonHandler}
-                  >변경</Button>
+                  style={{ marginLeft: "0.5rem" }}
+                  onClick={buttonHandler}
+                >
+                  변경
+                </Button>
               </Row>
               <Row>
                 <SubTitle>병원 연락처</SubTitle>
@@ -290,19 +329,18 @@ export default function HospitalInfo() {
                 <div style={{ marginBottom: "0.5rem" }} />
                 <div style={{ marginBottom: "0.5rem" }}>
                   <UploadFileLabel htmlFor="uploadFile">업로드</UploadFileLabel>
-                  <UploadFileInput type="file"
+                  <UploadFileInput
+                    type="file"
                     id="uploadFile"
-                    accept='image/jpg,image/png,image/jpeg,image/gif'
-                    name='profile_img'
+                    accept="image/jpg,image/png,image/jpeg,image/gif"
+                    name="profile_img"
                     onChange={(e: any) => {
                       convertFileToBase64(e.target.files[0]);
                       console.log(e.target.files);
                     }}
                   />
                 </div>
-                <div>
-                  {image && <img src={image} width="280px" alt="" />}
-                </div>
+                <div>{image && <img src={image} width="280px" alt="" />}</div>
               </Row>
               <div style={{ marginBottom: "0.5rem" }} />
               <Row>
@@ -341,7 +379,12 @@ export default function HospitalInfo() {
                 <span
                   style={{
                     marginLeft: "1rem",
-                    color: `${$keywordNumWarning?.textContent === "키워드가 정상적으로 등록되었습니다." ? theme.palette.blue : theme.palette.peach}`
+                    color: `${
+                      $keywordNumWarning?.textContent ===
+                      "키워드가 정상적으로 등록되었습니다."
+                        ? theme.palette.blue
+                        : theme.palette.peach
+                    }`,
                   }}
                   className="keywordNumWarning"
                 ></span>
@@ -367,13 +410,13 @@ export default function HospitalInfo() {
                 <Col>
                   <SubTitle
                     style={{
-                      marginBottom: "1rem"
+                      marginBottom: "1rem",
                     }}
-                  >영업시간</SubTitle>
-                  <Row>휴무일 선택</Row>
-                  <Row
-                    style={{ marginBottom: "0.5rem" }}
                   >
+                    영업시간
+                  </SubTitle>
+                  <Row>휴무일 선택</Row>
+                  <Row style={{ marginBottom: "0.5rem" }}>
                     <Button id="Mon">월</Button>
                     <Button id="Tues">화</Button>
                     <Button id="Wed">수</Button>
@@ -385,7 +428,9 @@ export default function HospitalInfo() {
                   <Row>시간 선택</Row>
                   <Row>
                     {timeList.map((time) => (
-                      <Button id={time} key={time}>{time}:00</Button>
+                      <Button id={time} key={time}>
+                        {time}:00
+                      </Button>
                     ))}
                   </Row>
                   <Row style={{ marginTop: "1rem" }}>
@@ -399,9 +444,13 @@ export default function HospitalInfo() {
                     />
                   </Row>
                   <Row>
-                    <Button onClick={() => {
-                      console.log(hospitalInfo)
-                    }}>개발자 확인 버튼</Button>
+                    <Button
+                      onClick={() => {
+                        console.log(hospitalInfo);
+                      }}
+                    >
+                      개발자 확인 버튼
+                    </Button>
                   </Row>
                 </Col>
               </Row>
@@ -413,9 +462,11 @@ export default function HospitalInfo() {
                 <SubTitle
                   style={{
                     margin: "auto",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                   }}
-                >서비스 추가</SubTitle>
+                >
+                  서비스 추가
+                </SubTitle>
               </Row>
               <Row>
                 <div>
@@ -425,9 +476,8 @@ export default function HospitalInfo() {
                     onChange={onChange}
                     style={{
                       marginLeft: "0.5rem",
-                      marginBottom: "0.5rem"
+                      marginBottom: "0.5rem",
                     }}
-                    
                   />
                 </div>
               </Row>
@@ -439,7 +489,7 @@ export default function HospitalInfo() {
                     onChange={onChange}
                     style={{
                       marginLeft: "0.5rem",
-                      marginBottom: "0.5rem"
+                      marginBottom: "0.5rem",
                     }}
                   />
                 </div>
@@ -452,7 +502,7 @@ export default function HospitalInfo() {
                     onChange={onChange}
                     style={{
                       marginLeft: "0.5rem",
-                      marginBottom: "0.5rem"
+                      marginBottom: "0.5rem",
                     }}
                   />
                 </div>
@@ -465,42 +515,46 @@ export default function HospitalInfo() {
                     onChange={onChange}
                     style={{
                       marginLeft: "0.5rem",
-                      marginBottom: "0.5rem"
+                      marginBottom: "0.5rem",
                     }}
                   />
                 </div>
               </Row>
               <Row>
-              <Button
-                style={{
-                  marginLeft: "0.5rem",
-                  marginBottom: "1.5rem",
-                  margin: "auto"
-                }}
-                onClick={onServiceSubmit}
-              >추가</Button>
+                <Button
+                  style={{
+                    marginLeft: "0.5rem",
+                    marginBottom: "1.5rem",
+                    margin: "auto",
+                  }}
+                  onClick={onServiceSubmit}
+                >
+                  추가
+                </Button>
               </Row>
               <Row>
                 <SubTitle
                   style={{
                     marginBottom: "1rem",
                     margin: "auto",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                   }}
-                >제공중인 서비스 목록</SubTitle>
-
+                >
+                  제공중인 서비스 목록
+                </SubTitle>
               </Row>
             </Form>
           </Col>
         </Row>
       </div>
       <Row>
-          <Button
-            style={{ marginTop: "1rem", marginLeft: "1rem" }}
-            onClick={withdrawButtonHandler}
-          >탈퇴</Button>
+        <Button
+          style={{ marginTop: "1rem", marginLeft: "1rem" }}
+          onClick={withdrawButtonHandler}
+        >
+          탈퇴
+        </Button>
       </Row>
     </div>
   );
 }
-

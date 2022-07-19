@@ -15,8 +15,6 @@ function PetInformation() {
   }, []);
 
   const reload = async () => {
-    console.log("11111");
-
     const res = await axios.get("http://localhost:5100/pet/mypets", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -27,20 +25,22 @@ function PetInformation() {
     console.log(data);
   };
 
-  const onhandleDelete = async (id: string) => {
-    await axios.delete("http://localhost:5100/pet/delete", {
-      data: { petId: id },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    // const newPets = [...pets];
-    // const newArr = newPets.filter((pet) => pet._id !== id);
-    // setPets(newArr);
-    console.log("로드전", pets);
-    reload();
-    console.log("로드 후", pets);
-  };
+  // const onhandleDelete = async (id: string) => {
+  //   console.log("로드전", pets);
+  //   const newPets = [...pets];
+  //   const newArr = newPets.filter((pet) => pet._id !== id);
+  //   setPets(newArr);
+  //   // await axios.delete("http://localhost:5100/pet/delete", {
+  //   //   data: { petId: id },
+  //   //   headers: {
+  //   //     Authorization: `Bearer ${token}`,
+  //   //   },
+  //   // });
+  //   // reload();
+  //   console.log("newarr: ", newArr);
+  //   console.log("로드 후", pets);
+  // };
+  // console.log("delete밖: ", pets);
 
   return (
     <MainContainer>
@@ -51,7 +51,11 @@ function PetInformation() {
       {isOpen && <AddPet />}
       썸넬이 필요함
       {pets.map((pet, i) => (
-        <PetCard pet={pet} key={i} onhandleDelete={onhandleDelete} />
+        <PetCard
+          pet={pet}
+          key={i}
+          // setPets={(pets: PetInfoType[]) => setPets(pets)}
+        />
       ))}
     </MainContainer>
   );
