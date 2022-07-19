@@ -15,6 +15,8 @@ function PetInformation() {
   }, []);
 
   const reload = async () => {
+    console.log("11111");
+
     const res = await axios.get("http://localhost:5100/pet/mypets", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -35,9 +37,10 @@ function PetInformation() {
     // const newPets = [...pets];
     // const newArr = newPets.filter((pet) => pet._id !== id);
     // setPets(newArr);
+    console.log("로드전", pets);
     reload();
+    console.log("로드 후", pets);
   };
-  console.log("pets", pets);
 
   return (
     <MainContainer>
