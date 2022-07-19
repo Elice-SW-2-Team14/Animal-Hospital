@@ -97,6 +97,11 @@ const HospitalSchema = new Schema(
       required: false,
       default: '62cc3c7532b6e445bc83920e',
     },
+    starRating: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
   },
   {
     collection: 'hospitals',

@@ -146,7 +146,7 @@ petRouter.patch('/update', loginRequired, upload.single('image'),async(req,res,n
 
 
 //펫 정보 삭제
-petRouter.delete('/delete', async(req,res,next)=>{
+petRouter.delete('/delete',loginRequired, async(req,res,next)=>{
     try{
         const {petId} = req.body;
         const deleteResult = await petService.deletePetData(petId);

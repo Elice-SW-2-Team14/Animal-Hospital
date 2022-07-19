@@ -1,4 +1,4 @@
-// 추후 API가 만들어질시에는 삭제할 파일입니다!
+// 추후 API가 만들어질시에는 삭제할 파일입니다! ../../../public/tags/bird.png
 type DataProps = {
   hospitalName: string;
   address: string;

@@ -21,6 +21,7 @@ async function loginRequired (req : Request, res : Response, next: NextFunction)
         const jwtDecoded = jwt.verify( userToken, secretKey) as JwtPayload;
         const userId = jwtDecoded.userId;
         const userStatus = jwtDecoded.userStatus;
+        const role = jwtDecoded.role;
 
         if(userStatus === "expired") {
             throw new Error("탈퇴한 사용자입니다.")
@@ -29,6 +30,8 @@ async function loginRequired (req : Request, res : Response, next: NextFunction)
         //로그인한 유저의 userId를 request객체의 속성으로 보내줌
         req.currentUserId = userId;
         req.userStatus = userStatus;
+        req.userRole = role;
+        
         next()
 
         

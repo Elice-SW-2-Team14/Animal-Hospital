@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import TimeButton from '../../components/TimeButton';
+import TimeButton from '../../components/detail/TimeButton';
 import CalendarUi from './Calendar';
+import PetSelect from './PetSelect';
 const MainContainer = styled.div`
   max-width: 1000px;
   margin: 1rem auto;
@@ -100,6 +101,7 @@ function Detail() {
           <Reservation>
             <CalendarUi />
             <TimeButton />
+            <PetSelect />
           </Reservation>
         </ReservationContainer>
       </ContentContainer>

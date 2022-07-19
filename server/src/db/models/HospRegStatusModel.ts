@@ -4,7 +4,7 @@ import { HospRegStatusSchema } from '../schemas/HospRegStatusSchema';
 const HospRegStatus = model('hospRegStatus', HospRegStatusSchema);
 
 export interface HospRegStatusInfo {
-  _id?: object;
+  _id?: mongoose.Types.ObjectId;
   name: string;
 }
 

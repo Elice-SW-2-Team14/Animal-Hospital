@@ -13,9 +13,9 @@ import MainKeyWord from './MainKeyWord';
 // main페이지에 사용할 컴포넌트
 function MainCard() {
   // 추후에는 서버에서 데이터를 받아서 데이터를 뿌리겠습니다.
-  const sampleDataProps = sampleData.map((items) => {
+  const sampleDataProps = sampleData.map((items, index) => {
     return (
-      <MainCardContainer>
+      <MainCardContainer key={index}>
         <MainCardImg
           src={items.imageUrl}
           alt=""

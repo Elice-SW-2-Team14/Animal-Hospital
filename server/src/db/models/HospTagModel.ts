@@ -1,10 +1,10 @@
-import { model } from 'mongoose';
+import mongoose, { model } from 'mongoose';
 import { HospTagSchema } from '../schemas/HospTagSchema';
 
 const HospTag = model('hospTag', HospTagSchema);
 
 export interface HospTagInfo {
-  _id?: object;
+  _id?: mongoose.Types.ObjectId;
   name: string;
   image?: string;
 }

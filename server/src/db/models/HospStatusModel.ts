@@ -1,10 +1,10 @@
-import { model } from "mongoose";
-import { HospStatusSchema } from "../schemas/HospStatusSchema";
+import mongoose, { model } from 'mongoose';
+import { HospStatusSchema } from '../schemas/HospStatusSchema';
 
-const HospStatus = model("hospStatus", HospStatusSchema);
+const HospStatus = model('hospStatus', HospStatusSchema);
 
 export interface HospStatusInfo {
-  _id?: object;
+  _id?: mongoose.Types.ObjectId;
   name: string;
 }
 

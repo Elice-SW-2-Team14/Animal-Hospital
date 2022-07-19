@@ -25,6 +25,20 @@ class HospTagService {
     return hospTag;
   }
 
+  async findByIds(hospTagIds: string[]): Promise<HospTagInfo[]> {
+    const HospTagInfoes: HospTagInfo[] = [];
+    for (let hospTagId of hospTagIds) {
+      const hospTag = await this.hospTagModel.findById(hospTagId);
+      if (!hospTag) {
+        throw new Error(
+          '해당 병원태그코드 내역이 없습니다. 다시 한 번 확인해 주세요.'
+        );
+      }
+      HospTagInfoes.push(hospTag);
+    }
+    return HospTagInfoes;
+  }
+
   async findAll() {
     const hospTag = await this.hospTagModel.findAll();
     return hospTag;

@@ -4,6 +4,7 @@ import {
   hospitalService,
   hospServiceService,
   hospStatusService,
+  hospTagService,
 } from '../services';
 import { HospLoginRequired, onlyHospOwner } from '../middlewares';
 import { upload } from '../utils';
@@ -560,10 +561,7 @@ hospitalRouter.get('/:hospitalName/detail', async (req, res, next) => {
 
     const hospInfo = await hospitalService.findHospitalByName(hospitalName);
 
-    const { name, address, businessHours, holiday, tag, keyword, image } =
-      hospInfo;
-
-    const hospDetailInfo = {
+    const {
       name,
       address,
       businessHours,
@@ -571,8 +569,95 @@ hospitalRouter.get('/:hospitalName/detail', async (req, res, next) => {
       tag,
       keyword,
       image,
+      phoneNumber,
+      hospitalCapacity,
+      director,
+      starRating,
+    } = hospInfo;
+
+    const tagIds = tag?.map((data) => data.toString()) as string[];
+
+    const tagsData = await hospTagService.findByIds(tagIds);
+
+    const hospDetailInfo = {
+      name,
+      address,
+      businessHours,
+      holiday,
+      tag: tagsData,
+      keyword,
+      image,
+      phoneNumber,
+      hospitalCapacity,
+      director,
+      starRating,
     };
-    res.status(200).json({ data: {}, message: hospDetailInfo });
+    res
+      .status(200)
+      .json({ data: { hospDetailInfo: hospDetailInfo }, message: '' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+//pagination 변수
+//page : 현재 페이지
+//perPage : 페이지 당 게시글개수
+hospitalRouter.get('/list/main', async (req, res, next) => {
+  try {
+    const page = Number(req.query.page || 1);
+    const perPage = Number(req.query.perPage || 10);
+
+    const tagName = req.query.tagName as string;
+    const tagsData = await hospTagService.findByName(tagName);
+    const tagId = tagsData._id as mongoose.Types.ObjectId;
+
+    const searchOptions = { tag: tagId };
+
+    const totalHospitals = await hospitalService.countTotalHospitals(
+      searchOptions
+    );
+
+    const hospitals = await hospitalService.getHospitals(
+      page,
+      perPage,
+      searchOptions
+    );
+
+    const totalPage = Math.ceil(totalHospitals / perPage);
+
+    res.status(200).json({
+      data: {
+        searchOptions: searchOptions,
+        hospitals: hospitals,
+        page: page,
+        perPage: perPage,
+        totalPage: totalPage,
+        totalHospitals: totalHospitals,
+      },
+      message: '',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+hospitalRouter.get('/detail', HospLoginRequired, async (req, res, next) => {
+  try {
+    const hospInfo = await hospitalService.findHospitalByName(
+      req.currentHospName
+    );
+
+    const { name, address, businessHours, holiday, tag, keyword, image } =
+      hospInfo;
+
+    const tagIds = tag?.map((data) => data.toString()) as string[];
+
+    const tagsData = await hospTagService.findByIds(tagIds);
+
+    res
+      .status(200)
+      .json({ data: { hospDetailInfo: hospInfo, tag: tagsData }, message: '' });
   } catch (error) {
     next(error);
   }

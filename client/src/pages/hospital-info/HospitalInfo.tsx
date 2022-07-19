@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, MouseEvent } from "react";
 import "antd/dist/antd.min.css";
 import { Button, Form, Input, Typography, Row, Col } from "antd";
 import { theme } from "../../styles/Colors";
@@ -10,13 +10,16 @@ import {
 } from "./Style";
 import { HospitalInfoType, HospitalServiceInfoType } from "./Interface";
 import axios from "axios";
+import { createNextState } from "@reduxjs/toolkit";
 
 const { Title } = Typography;
 
 export default function HospitalInfo() {
+  // 폼 내용들은 입력 시마다 내용이 곧바로 저장되므로 추후 debouncing 적용 예정
+
   /* axios api */
   // const [datas, setDatas] = useState<[]>([]);
-  // // 병원 api 생기면 주석 풀고 나머지 작성 예정
+  // // 병원 api 연결을 위해 주석 풀고 나머지 작성 예정
   // const API_URL = `http://localhost:5100/api/user`;
 
   // useEffect(() => {
@@ -32,8 +35,6 @@ export default function HospitalInfo() {
   //   [API_URL]
   // );
 
-  // office hour: validation 시 e.target.value를 바로 비교하면 밀리지 않게 바로바로 비교 가능
-
   /* elements */
   const $HashWrapOuter = document.querySelector(".HashWrapOuter");
   const $HashWrapInner = document.createElement("div");
@@ -41,18 +42,54 @@ export default function HospitalInfo() {
   const $keywordNumWarning = document.querySelector(".keywordNumWarning");
 
   /* states */
-  const [hospitalInfo, setHospitalInfo] = useState<HospitalInfoType>();
+  const [hospitalInfo, setHospitalInfo] = useState<HospitalInfoType>({
+    name: "",
+    email: "",
+    director: "",
+    password: "",
+    address: {
+      postalCode: "",
+      address1: "",
+      address2: "",
+    },
+    phoneNumber: "",
+    businessHours: "",
+    businessNumber: "",
+    licenseNumber: "",
+    holiday: [""],
+    hospitalCapacity: 0,
+    tag: "",
+    keyword: [""],
+    image: "",
+  });
   const [hospitalServiceInfo, setHospitalServiceInfo] =
-    useState<HospitalServiceInfoType>();
+    useState<HospitalServiceInfoType>({
+      serviceName: "",
+      servicePrice: 0,
+      serviceDesc: "",
+      serviceCapacity: 0,
+    });
+  const [serviceList, setServiceList] = useState<any[]>([]);
   const [image, setImage] = useState("");
-  const [keyword, setKeyword] = useState([""]);
+  const [keyword, setKeyword] = useState<string[] | undefined>([]);
   const [newKeyword, setNewKeyword] = useState("");
-  // const [serviceName, setServiceName] = useState("");
-  // const [servicePrice, setServicePrice] = useState(-999);
-  // const [serviceDesc, setServiceDesc] = useState("");
-  // const [serviceCapacity, setServiceCapacity] = useState(-999);
+  const [day, setDay] = useState<string[] | undefined>([]);
+  const [time, setTime] = useState<string[] | undefined>([]);
+  const [isButtonClicked, setisButtonClicked] = useState<boolean>(false);
 
   /* values */
+  const categoryList = [
+    "24시간",
+    "야간진료",
+    "강아지 전문",
+    "고양이 전문",
+    "특수동물",
+    "호텔",
+    "미용",
+    "중성화 전문",
+    "MRI",
+  ];
+  const dayList = ["월", "화", "수", "목", "금", "토", "일"];
   const timeList = [
     "00",
     "01",
@@ -79,9 +116,6 @@ export default function HospitalInfo() {
     "22",
     "23",
   ];
-
-  // const { postalCode, address1, address2 } = jsonData.address;
-  // const email = jsonData.email;
 
   /* constants */
   const AVAILABLE_KEYWORD_LENGTH = 10;
@@ -122,75 +156,103 @@ export default function HospitalInfo() {
       setNewKeyword(e.target.value);
 
       /* 키워드 클릭 시 키워드 삭제 */
+      // => 삭제 시 DOM에러 뜸. 아마 디자인용으로 새로 생성한 컴포넌트 때문으로 예상중이나 기능은 정상 작동해서 이후 수정할 예정
       $HashWrapInner.addEventListener("click", () => {
         $HashWrapOuter?.removeChild($HashWrapInner);
         console.log($HashWrapInner.innerHTML);
         console.log("newKeyword:", newKeyword);
-        setKeyword(keyword.filter((newKeyword: any) => newKeyword));
+        setKeyword(keyword!.filter((newKeyword: any) => newKeyword));
       });
 
       /* enter's key code: 13 */
-      // if (e.keyCode === 13  && e.target.value.trim() !== '') {
       if (e.keyCode === 13 && $keywordNumWarning) {
         if (newKeyword.length > AVAILABLE_KEYWORD_LENGTH) {
           $keywordNumWarning.textContent = `키워드는 ${AVAILABLE_KEYWORD_LENGTH}글자 미만이어야 합니다.`;
         } else if (
           $HashWrapOuter &&
           newKeyword &&
-          keyword.length <= AVAILABLE_KEYWORD_COUNTS
+          keyword!.length < AVAILABLE_KEYWORD_COUNTS
         ) {
           $HashWrapInner.innerHTML = "#" + newKeyword;
           $HashWrapOuter.appendChild($HashWrapInner);
-          let copyKeyword = [...keyword];
-          copyKeyword.push(newKeyword);
-          setKeyword(copyKeyword);
-          console.log(
-            "Enter Key Pressed. e.target.value:",
-            e.target.value,
-            "keyword:",
-            keyword,
-            "newKeyword:",
-            newKeyword,
-            "copyKeyword(이쪽 데이터를 전달할 예정):",
-            copyKeyword
-          );
+          setKeyword((current) => [...current!, newKeyword]);
           $keywordNumWarning.textContent =
             "키워드가 정상적으로 등록되었습니다.";
-          setNewKeyword("");
-          console.log("등록 이후 newKeyword", newKeyword);
         } else {
           $keywordNumWarning.textContent = `키워드는 ${AVAILABLE_KEYWORD_COUNTS}개까지 등록 가능합니다.`;
           setNewKeyword("");
-          console.log("초과 등록 실패 이후 newKeyword", newKeyword);
+          console.log("초과 등록 실패");
         }
+        console.log("keyword:", keyword, ", newkeyword:", newKeyword);
       }
     },
     [keyword, newKeyword, $HashWrapInner, $HashWrapOuter, $keywordNumWarning]
   );
-
-  /* 보낼 서비스 데이터 */
-  let serviceList: Object[] = [];
 
   // React.FormEvent<HTMLFormElement>
   const onServiceSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("서비스 추가 버튼 클릭");
     console.log("추가된 서비스:", hospitalServiceInfo);
-    // serviceList = [...serviceList, hospitalServiceInfo];
-    // console.log("serviceList:", serviceList);
+    setServiceList([...serviceList, hospitalServiceInfo]);
+    // PROBLEM : 초기화(보내지는 값만 초기화가 되고 form에는 반영이 안돼서 이전에 입력했던 사항이 그대로 남아있음...키워드와 비슷한 문제로 보임)
+    setHospitalServiceInfo({
+      serviceName: "",
+      servicePrice: 0,
+      serviceDesc: "",
+      serviceCapacity: 0,
+    });
+    //
+    console.log("serviceList:", serviceList);
   };
+
+  /* onClick handlers */
 
   const buttonHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     alert("버튼이 클릭되었습니다(확인용)");
   };
 
-  const withdrawButtonHandler = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    alert("병원 회원 탈퇴 버튼이 클릭되었습니다(확인용)");
+  const onClickDay = (e: MouseEvent<HTMLElement>) => {
+    const dayId = e.currentTarget.id;
+    console.log(dayId); // 월, 화, 수, ...
+    // 리액트스럽게 해보고 싶은데 state 활용해서 클릭된 요일만 배열에 담기고 클릭 상태가 아닌 요일은 배열에서 빠지게...일단 이렇게 구현해봄
+    // const selectDay = document.querySelector(`#${dayId}`);
+    // useEffect();
+    if (day!.find((week) => week === dayId)) {
+      // 이미 휴무일 배열에 있는 요일이면 제거하고 클릭 상태를 해제한다.
+      const dayIndex = day!.indexOf(dayId); // 인덱스값 찾기
+      setDay((current) => current!.filter((_, index) => index !== dayIndex));
+      // const [id, ...rest] = current;
+      // return rest
+      // selectDay
+    } else {
+      // 휴무일 배열에 없는 요일이면 추가한다.
+      setDay([...day!, dayId]);
+    }
+    console.log("휴무일 배열:", day);
   };
+
+  const onClickCategory = (e: MouseEvent<HTMLElement>) => {
+    const id = e.currentTarget.id;
+    console.log(id);
+  };
+
+  const onClickTime = (e: MouseEvent<HTMLElement>) => {
+    const id = e.currentTarget.id;
+    console.log(id);
+  };
+
+  const withdrawButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("병원 회원 탈퇴 버튼이 클릭되었습니다(확인용)");
+  };
+
+  // PROBLEM: 서비스 삭제 버튼 눌렀을 때 타입 오류 뜸
+  // function deleteServiceHandler(e:React.MouseEvent<Element>, index) {
+  //   // setServiceList(serviceList.splice(index, 1));
+  //   console.log(index, '서비스가 삭제되었습니다.');
+  // }
 
   useEffect(() => {
     // 임시 데이터 (api 추가 후 삭제 예정)
@@ -367,12 +429,17 @@ export default function HospitalInfo() {
               </Row>
               <Row>
                 <SubTitle>카테고리</SubTitle>
-                <input
-                  name="tag"
-                  style={{ marginBottom: "1rem", marginLeft: "0.5rem" }}
-                  type="text"
-                  defaultValue={hospitalInfo?.tag || ""}
-                />
+              </Row>
+              <Row>
+                {categoryList.map((category) => (
+                  <Button
+                    id={category}
+                    key={category}
+                    onClick={onClickCategory}
+                  >
+                    {category}
+                  </Button>
+                ))}
               </Row>
               <Row>
                 <SubTitle>키워드</SubTitle>
@@ -413,22 +480,43 @@ export default function HospitalInfo() {
                       marginBottom: "1rem",
                     }}
                   >
-                    영업시간
+                    {dayList.map((day) => (
+                      <Button id={day} key={day} onClick={onClickDay}>
+                        {day}
+                      </Button>
+                    ))}
                   </SubTitle>
-                  <Row>휴무일 선택</Row>
-                  <Row style={{ marginBottom: "0.5rem" }}>
-                    <Button id="Mon">월</Button>
-                    <Button id="Tues">화</Button>
-                    <Button id="Wed">수</Button>
-                    <Button id="Thurs">목</Button>
-                    <Button id="Fri">금</Button>
-                    <Button id="Sat">토</Button>
-                    <Button id="Sun">일</Button>
-                  </Row>
+                  {/* 이부분 */}
+                  {/* {dayList.map((day) => {
+                      if (isButtonClicked) { // 클릭된 상태면
+                        setisButtonClicked(false); // 클릭해제 상태로 바꿈
+                        return (
+                          <Button
+                            id={day}
+                            key={day}
+                            onClick={onClickDay}
+                            style={{
+                              borderColor: `${theme.palette.blue}`,
+                              color: `${theme.palette.blue}`
+                            }} 
+                          >{day}</Button>
+                        )
+                      }
+                      // 클릭되지 않았던 상태면
+                      setisButtonClicked(true); // 클릭 상태로 바꿈
+                      return (
+                        <Button
+                          id={day}
+                          key={day}
+                          onClick={onClickDay}
+                          >{day}</Button>
+                      )
+                    })} */}
+                  {/* </Row>  */}
                   <Row>시간 선택</Row>
                   <Row>
                     {timeList.map((time) => (
-                      <Button id={time} key={time}>
+                      <Button id={time} key={time} onClick={onClickTime}>
                         {time}:00
                       </Button>
                     ))}
@@ -542,6 +630,40 @@ export default function HospitalInfo() {
                 >
                   제공중인 서비스 목록
                 </SubTitle>
+              </Row>
+              <Row>
+                <Col>
+                  {serviceList?.map((item, index) => (
+                    <Row
+                      key={index}
+                      style={{
+                        border: "2px solid",
+                        borderRadius: "15px",
+                        margin: ".5rem .5rem",
+                        padding: ".5rem .5rem",
+                      }}
+                    >
+                      <Col>
+                        <Row>서비스명: {item.serviceName}</Row>
+                        <Row>서비스 가격: {item.servicePrice}</Row>
+                        <Row>서비스 설명: {item.serviceDesc}</Row>
+                        <Row>
+                          서비스 동시 수용가능인원수: {item.serviceCapacity}
+                        </Row>
+                      </Col>
+                      <Col>
+                        {/* 시간 관계상 수정 기능은 추후 추가 */}
+                        {/* <Row>
+                          <Button>수정</Button>
+                        </Row> */}
+                        {/* PROBLEM : 서비스 삭제 버튼 눌렀을 때 index에 타입 에러 뜸 */}
+                        {/* <Row>
+                          <Button onClick={deleteServiceHandler(index)}>삭제</Button>
+                        </Row> */}
+                      </Col>
+                    </Row>
+                  ))}
+                </Col>
               </Row>
             </Form>
           </Col>

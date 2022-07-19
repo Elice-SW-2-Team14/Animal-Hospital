@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {Link} from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import {
   faMoon,
   faDove,
@@ -10,7 +10,7 @@ import {
   faMarsAndVenus,
   faDog,
   faCat,
-  faXRay
+  faXRay,
 } from '@fortawesome/free-solid-svg-icons';
 import { faEarlybirds } from '@fortawesome/free-brands-svg-icons';
 import { CustomAxiosGet } from '../../common/CustomAxios';
@@ -29,7 +29,8 @@ const TagWrapper = styled(Link)<ITagValue>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: ${props => props.idx === props.tag ? 'black' : props.theme.palette.gray};
+  color: ${(props) =>
+    props.idx === props.tag ? 'black' : props.theme.palette.gray};
   transition: 0.2s all ease-in-out;
   cursor: pointer;
   border-bottom: 3px solid ${props => props.idx === props.tag ? 'black' : 'white'};
@@ -110,7 +111,6 @@ export default function Tags() {
   //   console.log(tagData);
   // }, []);
 
-
   return (
     <>
         {tagData.map((category:any, idx:number) => {
@@ -128,5 +128,5 @@ export default function Tags() {
           )
         })}
     </>
-  )
+  );
 }

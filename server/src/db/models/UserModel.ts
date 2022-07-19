@@ -38,11 +38,9 @@ export interface StatusInfoRequired {
     userStatus : string
 }
 export class UserModel {
-    async findByEmail(email : string) : Promise<UserData> {
+    async findByEmail(email : string) : Promise<UserData | null> {
         const user = await User.findOne({email});
-        if(!user){
-            throw new Error("email 정보가 없습니다");
-        } 
+        
         return user;
     }
 
