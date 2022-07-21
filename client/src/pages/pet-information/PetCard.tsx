@@ -23,43 +23,49 @@ const defaultImg =
   "https://media.istockphoto.com/photos/crazy-looking-black-and-white-border-collie-dog-say-looking-intently-picture-id1213516345?k=20&m=1213516345&s=612x612&w=0&h=_XUSwcrXe5HjI2QEby0ex6Tl1fB_YJUzUU8o2cUt0YA=";
 const token = localStorage.getItem("token");
 function PetCard({ pet, onhandleDelete }: any) {
-  const [petInfo, setPetInfo] = useState<PetInfoType>(pet);
+  const [petInfo, setPetInfo] = useState<PetInfoType>({
+    _id: "",
+    image: "",
+    owner: "",
+    species: "",
+    breed: "",
+    name: "",
+    age: 0,
+    sex: "",
+    weight: 0,
+    medicalHistory: "",
+    vaccination: "",
+    neutralized: "",
+  });
   const [gender, setGender] = useState(pet.sex);
   const [neut, setNeut] = useState(pet.neutralized);
-
+  // 받아온 값 pet을 petinfo에 넣어줌
   useEffect(() => {
     setPetInfo(pet);
   }, [pet]);
 
-  const onChange = (
+  const onInputChange = (
     event:
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    event.preventDefault();
     const data = {
-      ...pet,
-      petId: pet._id,
+      ...petInfo,
       [event.currentTarget.name]: event.currentTarget.value,
     };
     setPetInfo(data);
-    console.log(data);
   };
 
   const onhandleUpdate = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const data = { ...petInfo, petId: pet._id };
+    axios.patch(`http://localhost:5100/pet/update`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    axios
-      .patch(`http://localhost:5100/pet/update`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      });
-    alert("수정완료!");
+    alert("수정완료! 🐾");
   };
 
   // radio 관련
@@ -86,17 +92,29 @@ function PetCard({ pet, onhandleDelete }: any) {
           <PetImg src={petInfo.image || defaultImg} />
         </ImgContainer>
         <InfoContainer>
-          <NameInput value={petInfo.name} name="name" onChange={onChange} />
+          <NameInput
+            name="name"
+            onChange={onInputChange}
+            value={petInfo.name}
+          />
           <Contents>
             <InfoInput
-              value={petInfo.species}
               name="species"
-              onChange={onChange}
+              onChange={onInputChange}
+              value={petInfo.species}
             />
-            <InfoInput value={petInfo.breed} name="breed" onChange={onChange} />
+            <InfoInput
+              name="breed"
+              onChange={onInputChange}
+              value={petInfo.breed}
+            />
           </Contents>
-          <InfoInput value={petInfo.age} name="age" onChange={onChange} />
-          <InfoInput value={petInfo.weight} name="weight" onChange={onChange} />
+          <InfoInput value={petInfo.age} name="age" onChange={onInputChange} />
+          <InfoInput
+            name="weight"
+            onChange={onInputChange}
+            value={petInfo.weight}
+          />
           <Contents>
             <Item>
               <RadioText>성별</RadioText>
@@ -167,21 +185,22 @@ function PetCard({ pet, onhandleDelete }: any) {
             </RadioContainer>
           </Contents>
           <InfoTextarea
-            onChange={onChange}
-            name="medicalHistorys"
+            name="medicalHistory"
+            onChange={onInputChange}
             value={petInfo.medicalHistory}
           />
           <InfoTextarea
-            onChange={onChange}
             name="vaccination"
+            onChange={onInputChange}
             value={petInfo.vaccination}
           />
+          <Button>
+            <i className="fa-solid fa-camera"></i>
+            사진
+          </Button>
           <Button onClick={onhandleUpdate}>
             <i className="fa-solid fa-paw"></i>저장
           </Button>
-          {/* <Btn>
-            <i className="fa-solid fa-paw"></i>
-          </Btn> */}
         </InfoContainer>
       </Contents>
     </PetCardContainer>

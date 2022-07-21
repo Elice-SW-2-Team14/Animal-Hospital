@@ -18,7 +18,7 @@ import {
 import { PetInfoType } from "./PetInfoInterface";
 
 const token = localStorage.getItem("token");
-function AddPet({ onAdd }: any) {
+function AddPet({ onhandleAdd }: any) {
   const [gender, setGender] = useState<string>();
   const [neut, setNeut] = useState<string>();
   const [img, setImg] = useState();
@@ -60,7 +60,7 @@ function AddPet({ onAdd }: any) {
       sex: gender,
       neutralized: neut,
     };
-    onAdd(data);
+    onhandleAdd(data);
   };
 
   return (

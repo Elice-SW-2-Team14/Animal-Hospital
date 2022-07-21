@@ -102,16 +102,10 @@ function UserInfo() {
       })
       .then((res) => {
         console.log(res);
-
         alert("수정이 완료되었습니다 👍");
-
-        // 수정할 때 마다 입력해야함 + 새로운 비밀번호는 입력하지 않아도 됨
-        // 현재 비밀번호 위치를 수정 옆으로?
       });
   };
   const expiration = async () => {
-    //TODO
-    // console.log(token);
     await axios
       .patch(
         `http://localhost:5100/api/expiration

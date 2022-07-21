@@ -8,7 +8,7 @@ import { PetInfoType } from "./PetInfoInterface";
 const token = localStorage.getItem("token");
 function PetInformation() {
   const [pets, setPets] = useState<PetInfoType[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   // 처음 한 번 서버 통신
   useEffect(() => {
     reload();
@@ -35,7 +35,7 @@ function PetInformation() {
     alert("삭제완료!");
   };
 
-  const onAdd = async (data: any) => {
+  const onhandleAdd = async (data: any) => {
     try {
       await axios.post("http://localhost:5100/pet/register", data, {
         headers: {
@@ -50,16 +50,29 @@ function PetInformation() {
     }
   };
 
+  const onhandleUpdate = () => {
+    //   axios
+    //   .patch(`http://localhost:5100/pet/update`, data, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //   });
+    // alert("수정완료! 🐾");
+  };
+
   return (
     <MainContainer>
-      <h1>pet info</h1>
+      <h1>내 펫 정보 확인</h1>
       <AddBtn onClick={() => setIsOpen(!isOpen)}>
         <i className="fa-solid fa-plus fa-xl"></i>
       </AddBtn>
       {isOpen && (
         <AddPet
-          onAdd={(data: any) => {
-            onAdd(data);
+          onhandleAdd={(data: any) => {
+            onhandleAdd(data);
           }}
         />
       )}
