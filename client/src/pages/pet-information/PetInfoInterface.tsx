@@ -1,4 +1,5 @@
 export interface PetInfoType {
+  _id: string;
   image?: string;
   owner: string;
   species: string;

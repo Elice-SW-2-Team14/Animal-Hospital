@@ -4,6 +4,11 @@ export const MainContainer = styled.div`
   margin: 1rem auto;
 `;
 
+export const Title = styled.p`
+  text-align: center;
+  font-weight: 500;
+`;
+
 export const AddBtn = styled.button`
   border: none;
   border-radius: 50%;
@@ -13,6 +18,18 @@ export const AddBtn = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.palette.orange};
     color: ${(props) => props.theme.palette.lightgray};
+  }
+`;
+export const Button = styled.button`
+  border: none;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: ${(props) => props.theme.palette.orange};
+  color: white;
+  font-weight: bold;
+  &:hover {
+    transform: scale(1.05);
   }
 `;
 export const PetCardContainer = styled.div`
@@ -34,8 +51,8 @@ export const Contents = styled.div`
 `;
 export const ImgContainer = styled.div`
   display: flex;
+  padding: 2rem;
   cursor: pointer;
-  /* border: 1px solid; */
 `;
 export const PetImg = styled.img`
   max-width: 400px;
@@ -101,4 +118,21 @@ export const RadioButton = styled.input`
 export const RadioText = styled.p`
   font-size: 0.9rem;
   margin-left: 0.4rem;
+`;
+
+////////
+export const Container = styled.form`
+  margin: 2rem 0;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  /* border: 2px solid ${(props) => props.theme.palette.lightgray}; */
+`;
+export const AddInput = styled(InfoInput)`
+  font-size: 0.9rem;
+  border-bottom: 1px solid ${(props) => props.theme.palette.lightgray};
+`;
+export const AddTextarea = styled(InfoTextarea)`
+  font-size: 0.9rem;
+  border-bottom: 1px solid ${(props) => props.theme.palette.lightgray};
 `;
