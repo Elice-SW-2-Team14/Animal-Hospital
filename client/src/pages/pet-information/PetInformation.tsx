@@ -42,25 +42,12 @@ function PetInformation() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("펫 추가 완료 🐾");
       await reload();
+      alert("펫 추가 완료 🐾");
     } catch (err) {
-      console.log(err);
       alert("입력한 내용을 확인해주세요 🥲 ");
+      console.log(err);
     }
-  };
-
-  const onhandleUpdate = () => {
-    //   axios
-    //   .patch(`http://localhost:5100/pet/update`, data, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
-    // alert("수정완료! 🐾");
   };
 
   return (

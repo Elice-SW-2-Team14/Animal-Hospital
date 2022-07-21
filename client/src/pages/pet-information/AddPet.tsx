@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-import ImgUploader from "../../components/ImgUploader";
+import React, { useState, useRef, useCallback } from "react";
 import {
   Title,
   ImgContainer,
@@ -17,11 +16,10 @@ import {
 } from "./PetInfoStyle";
 import { PetInfoType } from "./PetInfoInterface";
 
-const token = localStorage.getItem("token");
 function AddPet({ onhandleAdd }: any) {
   const [gender, setGender] = useState<string>();
   const [neut, setNeut] = useState<string>();
-  const [img, setImg] = useState();
+  const [img, setImg] = useState<File | null>();
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
@@ -42,14 +40,11 @@ function AddPet({ onhandleAdd }: any) {
     console.log(value);
     setNeut(value);
   };
-  const updateImg = ({ newImgs }: any) => {
-    setImg(newImgs);
-    // console.log(img);
-  };
 
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const data = {
+      image: img,
       name: nameRef.current?.value,
       age: ageRef.current?.value,
       weight: weightRef.current?.value,
@@ -60,24 +55,32 @@ function AddPet({ onhandleAdd }: any) {
       sex: gender,
       neutralized: neut,
     };
-    onhandleAdd(data);
+    console.log(data);
+
+    // onhandleAdd(data);
+  };
+
+  const onLoadImg = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files![0];
+    setImg(file);
   };
 
   return (
     <Container ref={formRef}>
       <Title>펫 정보를 입력해주세요 🐾</Title>
-      <ImgContainer>
-        <ImgUploader updateImg={updateImg} />
-        {/* <PetImg src="https://media.istockphoto.com/photos/crazy-looking-black-and-white-border-collie-dog-say-looking-intently-picture-id1213516345?k=20&m=1213516345&s=612x612&w=0&h=_XUSwcrXe5HjI2QEby0ex6Tl1fB_YJUzUU8o2cUt0YA=" /> */}
-      </ImgContainer>
+      <div>
+        <input type="file" onChange={onLoadImg} />
+        <label htmlFor="image">파일 선택하기</label>
+        {/* <img src={img} alt="img" /> */}
+      </div>
       <InfoContainer>
         <AddInput placeholder="이름" ref={nameRef} />
         <Contents>
           <AddInput placeholder="종" ref={speciesRef} />
           <AddInput placeholder="품종" ref={breedRef} />
         </Contents>
-        <AddInput placeholder="나이" ref={ageRef} />
-        <AddInput placeholder="무게" ref={weightRef} />
+        <AddInput type="number" placeholder="나이" ref={ageRef} />
+        <AddInput type="number" placeholder="무게" ref={weightRef} />
         <Contents>
           <Item>
             <RadioText>성별</RadioText>

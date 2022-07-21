@@ -22,6 +22,7 @@ import {
 const defaultImg =
   "https://media.istockphoto.com/photos/crazy-looking-black-and-white-border-collie-dog-say-looking-intently-picture-id1213516345?k=20&m=1213516345&s=612x612&w=0&h=_XUSwcrXe5HjI2QEby0ex6Tl1fB_YJUzUU8o2cUt0YA=";
 const token = localStorage.getItem("token");
+
 function PetCard({ pet, onhandleDelete }: any) {
   const [petInfo, setPetInfo] = useState<PetInfoType>({
     _id: "",
@@ -40,6 +41,8 @@ function PetCard({ pet, onhandleDelete }: any) {
   const [gender, setGender] = useState(pet.sex);
   const [neut, setNeut] = useState(pet.neutralized);
   // 받아온 값 pet을 petinfo에 넣어줌
+  console.log(pet);
+
   useEffect(() => {
     setPetInfo(pet);
   }, [pet]);
@@ -59,13 +62,16 @@ function PetCard({ pet, onhandleDelete }: any) {
   const onhandleUpdate = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const data = { ...petInfo, petId: pet._id };
-    axios.patch(`http://localhost:5100/pet/update`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    alert("수정완료! 🐾");
+    try {
+      axios.patch(`http://localhost:5100/pet/update`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("수정완료! 🐾");
+    } catch (err) {
+      alert("입력값을 다시 한 번 확인해주세요 🥲");
+    }
   };
 
   // radio 관련
@@ -78,6 +84,8 @@ function PetCard({ pet, onhandleDelete }: any) {
     setNeut(value);
   };
 
+  console.log(gender, neut);
+
   return (
     <PetCardContainer>
       <DeleteBtn
@@ -89,7 +97,7 @@ function PetCard({ pet, onhandleDelete }: any) {
       </DeleteBtn>
       <Contents>
         <ImgContainer>
-          <PetImg src={petInfo.image || defaultImg} />
+          <PetImg src={petInfo.image} />
         </ImgContainer>
         <InfoContainer>
           <NameInput
@@ -109,9 +117,15 @@ function PetCard({ pet, onhandleDelete }: any) {
               value={petInfo.breed}
             />
           </Contents>
-          <InfoInput value={petInfo.age} name="age" onChange={onInputChange} />
+          <InfoInput
+            name="age"
+            type="number"
+            value={petInfo.age}
+            onChange={onInputChange}
+          />
           <InfoInput
             name="weight"
+            type="number"
             onChange={onInputChange}
             value={petInfo.weight}
           />
