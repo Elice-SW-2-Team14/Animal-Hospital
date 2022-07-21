@@ -35,19 +35,20 @@ function PetInformation() {
     alert("삭제완료!");
   };
 
-  // const onUpdate = async (data: any) => {
-  //   try {
-  //     await axios.post("http://localhost:5100/pet/register", data, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     alert("펫 추가 완료 🐾");
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert("입력한 내용을 확인해주세요 🥲 ");
-  //   }
-  // };
+  const onAdd = async (data: any) => {
+    try {
+      await axios.post("http://localhost:5100/pet/register", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("펫 추가 완료 🐾");
+      await reload();
+    } catch (err) {
+      console.log(err);
+      alert("입력한 내용을 확인해주세요 🥲 ");
+    }
+  };
 
   return (
     <MainContainer>
@@ -55,7 +56,13 @@ function PetInformation() {
       <AddBtn onClick={() => setIsOpen(!isOpen)}>
         <i className="fa-solid fa-plus fa-xl"></i>
       </AddBtn>
-      {isOpen && <AddPet />}
+      {isOpen && (
+        <AddPet
+          onAdd={(data: any) => {
+            onAdd(data);
+          }}
+        />
+      )}
       {pets.map((pet, i) => (
         <PetCard pet={pet} key={i} onhandleDelete={onhandleDelete} />
       ))}

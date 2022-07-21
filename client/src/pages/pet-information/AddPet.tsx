@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import ImgUploader from "../../components/ImgUploader";
 import {
   Title,
@@ -19,7 +18,7 @@ import {
 import { PetInfoType } from "./PetInfoInterface";
 
 const token = localStorage.getItem("token");
-function AddPet() {
+function AddPet({ onAdd }: any) {
   const [gender, setGender] = useState<string>();
   const [neut, setNeut] = useState<string>();
   const [img, setImg] = useState();
@@ -31,32 +30,6 @@ function AddPet() {
   const breedRef = useRef<HTMLInputElement>(null);
   const medicalHistoryRef = useRef<HTMLTextAreaElement>(null);
   const vaccinationRef = useRef<HTMLTextAreaElement>(null);
-
-  const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    const data = {
-      name: nameRef.current?.value,
-      age: ageRef.current?.value,
-      weight: weightRef.current?.value,
-      species: speciesRef.current?.value,
-      breed: breedRef.current?.value,
-      medicalHistory: medicalHistoryRef.current?.value,
-      vaccination: vaccinationRef.current?.value,
-      sex: gender,
-      neutralized: neut,
-    };
-    try {
-      await axios.post("http://localhost:5100/pet/register", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert("펫 추가 완료 🐾");
-    } catch (err) {
-      console.log(err);
-      alert("입력한 내용을 확인해주세요 🥲 ");
-    }
-  };
 
   const onhandleGender = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -72,6 +45,22 @@ function AddPet() {
   const updateImg = ({ newImgs }: any) => {
     setImg(newImgs);
     // console.log(img);
+  };
+
+  const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    const data = {
+      name: nameRef.current?.value,
+      age: ageRef.current?.value,
+      weight: weightRef.current?.value,
+      species: speciesRef.current?.value,
+      breed: breedRef.current?.value,
+      medicalHistory: medicalHistoryRef.current?.value,
+      vaccination: vaccinationRef.current?.value,
+      sex: gender,
+      neutralized: neut,
+    };
+    onAdd(data);
   };
 
   return (
