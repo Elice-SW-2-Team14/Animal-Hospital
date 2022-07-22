@@ -205,6 +205,9 @@ export async function loginKakaoCTR (req : Request, res : Response, next : NextF
        
         passport.authenticate('kakao', (err, user ,info) =>{
             console.log('passport.authenticate(kakao)실행');
+            if(!user){
+                return res.redirect('http://localhost:3030/login')
+            }
             console.log(user);
             console.log(req.user);
           
