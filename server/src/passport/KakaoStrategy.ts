@@ -8,7 +8,7 @@ import { nextTick } from 'process';
 
 const kakaoConfig = {
     clientID : process.env.KAKAO_ID || "",
-    callbackURL : "http://localhost:5100/api/oauth/kakao/callback"
+    callbackURL : "http://localhost:5000/api/oauth/kakao/callback"
 }
 
 async function kakaoVerify (
