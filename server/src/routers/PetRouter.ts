@@ -1,9 +1,9 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import * as _ from 'lodash'; 
-import { PetInfo } from '../db';
 import { loginRequired } from '../middlewares/LoginRequired';
 import {petService} from '../services/PetService';
-import {upload} from '../utils'
+import {upload} from '../utils';
+import { HttpError } from '../middlewares';
 
 const petRouter = Router();
 
@@ -39,14 +39,15 @@ petRouter.post('/register', loginRequired, upload.single('image'), async(req : R
             image = (req.file as Express.MulterS3.File).location;
         }
 
-        
-        const requiredParams = ['species', 'breed','name','age','sex','weight','medicalHistory']
+        console.log(req.body);
+        console.log(image);
+        const requiredParams = ['species', 'breed','name','sex','weight','medicalHistory']
 
         if (!requiredParams.every(param => req.body[param])) {
 
-            throw new Error("필수 정보가 모두 입력되었는지 확인해주세요.")
+            throw new HttpError(400, "필수 정보가 모두 입력되었는지 확인해주세요.")
         }
-           
+        
         const newPet = await petService.addPet({
             owner,
             species,
@@ -89,7 +90,7 @@ petRouter.get('/mypets', loginRequired, async(req : Request, res : Response, nex
 
 
 //펫 정보 수정
-petRouter.patch('/update', loginRequired, upload.single('image'),async(req,res,next)=>{
+petRouter.patch('/update', loginRequired, upload.single('image'), async(req,res,next)=>{
 
     try{
         if(_.isEmpty(req.body)){

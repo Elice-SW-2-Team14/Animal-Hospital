@@ -1,4 +1,5 @@
-import { PetData, PetInfo, petModel, PetModel,  } from "../db";
+import { petModel, PetModel,  } from "../db";
+import {PetData, PetInfo } from '../types/PetTypes';
 
 interface PetInfoRequired {
     owner : string,
@@ -11,8 +12,8 @@ class PetService {
     //펫 정보 등록
     async addPet(petInfo : PetInfo) : Promise<PetData>{
         const {owner, species, breed, name, age, sex, weight,medicalHistory, vaccination, neutralized, image} = petInfo;
-        
-        const createdPet = await this.petModel.create(petInfo);
+        const petInfos = {owner, species, breed, name, age, sex, weight,medicalHistory, vaccination, neutralized, image};
+        const createdPet = await this.petModel.create(petInfos);
         return createdPet;
 
     }
