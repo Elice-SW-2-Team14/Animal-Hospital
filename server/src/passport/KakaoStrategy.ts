@@ -43,6 +43,14 @@ async function kakaoVerify (
 
 function passportKakaoConfig(){
     passport.use(new KakaoStrategy(kakaoConfig, kakaoVerify))
+    passport.serializeUser(function (user, done){
+        console.log(`user : ${user}`);
+        done(null, user)
+    })
+    passport.deserializeUser(function(obj : Object, done){
+        console.log(`obj : ${obj}`)
+        done(null, obj)
+    })
 }
 
 export {passportKakaoConfig}
