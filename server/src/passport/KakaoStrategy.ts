@@ -1,10 +1,8 @@
 import passport from 'passport';
 import {Strategy as KakaoStrategy, Profile} from 'passport-kakao';
 import {userModel} from '../db';
-import {userService} from '../services';
-import randomstring from 'randomstring';
 import bcrypt from 'bcrypt';
-import { nextTick } from 'process';
+
 
 const kakaoConfig = {
     clientID : process.env.KAKAO_ID || "",
