@@ -19,6 +19,7 @@ class UserService {
       address,
       role,
       userStatus,
+      InCaseOAuth
     } = userInfo;
 
     //비밀번호 해쉬화
@@ -31,10 +32,14 @@ class UserService {
       address,
       role,
       userStatus,
+      InCaseOAuth
     };
 
     // db에 저장
     const createdNewUser = await this.userModel.create(newUserInfo);
+    if(!createdNewUser){
+      console.log('failed to create new user')
+    }
     return createdNewUser;
   }
 

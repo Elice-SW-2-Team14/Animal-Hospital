@@ -77,7 +77,7 @@ export async function loginUserCTR (req : Request, res : Response, next : NextFu
     }
 }
 
-//passport-local login 위 로그인 코드 대체
+//passport-local login 위 일반 로그인 코드 대체
 export async function loginPassportCTR (req:Request, res:Response, next : NextFunction){
     try {
         
@@ -203,39 +203,34 @@ export async function ExpireUserCTR (req : Request, res : Response, next : NextF
 export async function loginKakaoCTR (req : Request, res : Response, next : NextFunction){
     try {
        
-        passport.authenticate('kakao', (err, user ,info) =>{
+        passport.authenticate('kakao', async (err, user ,info) =>{
             console.log('passport.authenticate(kakao)실행');
             if(!user){
                 return res.redirect('http://localhost:3030/login')
             }
-            console.log(user);
-            console.log(req.user);
-          
-            req.login(user, async(err)=> {
-                console.log('kakao-callback user : ', user);
-                if(err){
-                    next(err);
-                    return;
+            console.log('kakao-callback user : ', user);
+            if(err){
+                next(err);
+                return;
+            }
+
+            const accessToken = await userService.getAccessToken(
+                user._id,
+                user.role,
+                user.userStatus
+            )
+
+            await userService.saveRefreshToken(user._id);
+
+            return res.status(200).json({
+                userToken : {
+                    accessToken,
+                    role : user.role,
+                    userStatus : user.userStatus
                 }
-
-                const accessToken = await userService.getAccessToken(
-                    user._id,
-                    user.role,
-                    user.userStatus
-                )
-
-                await userService.saveRefreshToken(user._id);
-
-                return res.status(200).json({
-                    userToken : {
-                        accessToken,
-                        role : user.role,
-                        userStatus : user.userStatus
-                    }
-                })       
             });
-        })(req,res);
-        
+        })(req,res)   
+    
     } catch (error) {
         next(error);
         return;

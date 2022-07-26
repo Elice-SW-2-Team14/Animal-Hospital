@@ -17,8 +17,8 @@ router.post('/register', registerUserCTR);
 router.post('/login', loginPassportCTR);
 
 router.get('/login/kakao', passport.authenticate('kakao'));
-router.get('/oauth/kakao/callback',loginKakaoCTR);
-// passportConfig();
+router.get('/login/kakao/callback',loginKakaoCTR);
+passportConfig();
 passportKakaoConfig();
 
 //일반회원 개인정보 조회

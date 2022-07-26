@@ -1,6 +1,8 @@
 import mongoose, {model, Types} from 'mongoose';
 import { UserSchema } from "../schemas/UserSchema";
 import {UserAddress, UserInfo, UserData, StatusInfoRequired, UserStatus} from '../../types/UserTypes';
+import {HttpError} from '../../middlewares/ErrorHandler';
+
 
 const User = model('users', UserSchema);
 interface ToUpdate {
@@ -20,6 +22,9 @@ export class UserModel {
 
     async create(userInfo : UserInfo) : Promise<UserInfo> {
         const createdNewUser = await User.create(userInfo);
+        if(!createdNewUser){
+            throw new HttpError(400, "db 입력 실패")
+        }
         return createdNewUser;
     }
 
