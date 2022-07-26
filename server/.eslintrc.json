@@ -1,13 +1,13 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
     "naver",
     "eslint:recommended",
     "@typescript-eslint/eslint-recommended",
-    "@typescript-eslint/recommended",
-    "prettier"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommend"
   ],
   "parserOptions": {
     "ecmaVersion": 2020,

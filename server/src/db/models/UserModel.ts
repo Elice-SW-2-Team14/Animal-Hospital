@@ -20,7 +20,7 @@ export class UserModel {
         return user;
     }
 
-    async create(userInfo : UserInfo) : Promise<UserInfo> {
+    async create(userInfo : UserInfo) : Promise<UserData> {
         const createdNewUser = await User.create(userInfo);
         if(!createdNewUser){
             throw new HttpError(400, "db 입력 실패")

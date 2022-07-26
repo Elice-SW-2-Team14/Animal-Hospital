@@ -32,21 +32,31 @@ async function kakaoVerify (
                 InCaseOAuth : 'kakao'
             }
 
-            console.log('카카오이메일: ',kakaoEmail);
-            console.log(kakaoNickname);
-            console.log('userInfo: ', userInformation);
-
-            const newUser = await userService.addUser(userInformation);
-            console.log(newUser);
+            const newUser = await userModel.create(userInformation);
+          
             if(!newUser){
                 console.log('creating user failed')
+                return;
             }
-            
+          
             done(null, newUser);
             return;
+           
+        } else {
+            if( user.InCaseOAuth === 'kakao'){
+                done( null, user);
+                return;
+            } else{
+                done(null, false, {
+                    result : "fail",
+                    message : "카카오로 가입된 계정이 아닙니다. 일반 로그인을 이용해 주세요."
+                })
+                return;
+            }
+
         }
-        done(null, user);
-        return;
+        // done(null, user);
+        // return;
     } catch (error) {
         // next(error)
         done(error)
