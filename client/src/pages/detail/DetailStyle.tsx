@@ -56,10 +56,24 @@ const Reservation = styled.div`
   padding: 24px;
   box-shadow: rgb(0 0 0 / 12%) 0px 6px 16px;
 `;
-const InfoTitle = styled.h2`
-  margin-bottom: 20px;
+const InfoTitle = styled.h2``;
+export const Add = styled.div`
+  padding: 1rem 0;
+  color: ${(props) => props.theme.palette.gray};
+  margin-bottom: 1rem;
 `;
-
+export const ServiceDiv = styled.div`
+  padding: 2rem 0.2rem;
+`;
+export const ServiceCol = styled.div`
+  display: flex;
+`;
+export const Ser = styled.div`
+  width: 10rem;
+  padding: 0.2rem;
+  font-size: 1.05rem;
+  color: #565656;
+`;
 export {
   InfoTitle,
   Reservation,

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import axios from "axios";
 import { CustomAxiosGet, CustomAxiosPost } from "../../common/CustomAxios";
 import TimeButton from "../../components/detail/TimeButton";
 import MainKeyWord from "../../components/main/MainKeyWord";
@@ -21,6 +22,10 @@ import {
   ReviewContainer,
   RightBottomImg,
   RightTopImg,
+  Ser,
+  ServiceCol,
+  ServiceDiv,
+  Add,
 } from "./DetailStyle";
 import HospitalService from "./HospitalService";
 import PetSelect from "./PetSelect";
@@ -47,11 +52,19 @@ function Detail() {
   const [hospitalInfo, setHospitalInfo] = useState<any>({});
   const bookDataPost = useRecoilValue(reservationState);
   const token = localStorage.getItem("token");
+  const [service, setService] = useState<any>([]);
 
   const fetchGetData = async () => {
     await CustomAxiosGet.get(`/hospital/${hospitalName}/detail`).then((res) =>
       setHospitalInfo(res.data.data.hospDetailInfo)
     );
+    await axios
+      .get(
+        `http://kdt-sw2-seoul-team14.elicecoding.com:5000/hospital/${hospitalName}/Services`
+      ) //
+      .then((res) => {
+        setService(res.data.data.hospServices);
+      });
   };
   useEffect(() => {
     fetchGetData();
@@ -67,6 +80,7 @@ function Detail() {
     CustomAxiosPost.post("/reservation/register", bookDataPost).then((res) =>
       console.log(res)
     );
+    alert("예약이 완료되었습니다.");
   };
 
   return (
@@ -101,6 +115,10 @@ function Detail() {
         <InfoContainer>
           <InfoDiv>
             <InfoTitle>{hospitalInfo.name}</InfoTitle>
+            <Add>
+              {hospitalInfo.address?.address1}
+              {hospitalInfo.address?.address2} {hospitalInfo.address?.address3}
+            </Add>
             <p>카테고리</p>
             {hospitalInfo.tag && (
               <MainKeyWord
@@ -111,11 +129,19 @@ function Detail() {
             )}
           </InfoDiv>
           <MainInfo>
-            <div>키워드</div>
             {hospitalInfo.keyword && (
               <MainKeyWord mainKeyWord={hospitalInfo.keyword} />
             )}
+            <ServiceDiv>
+              {service.map((a: any, i: number) => (
+                <ServiceCol key={i}>
+                  <Ser>{a?.name}</Ser>
+                  <Ser>{a?.price.toLocaleString()} 원</Ser>
+                </ServiceCol>
+              ))}
+            </ServiceDiv>
           </MainInfo>
+
           <ReviewContainer>
             <h3>Review!</h3>
           </ReviewContainer>

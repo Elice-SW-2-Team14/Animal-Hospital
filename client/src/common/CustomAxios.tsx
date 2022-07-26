@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const CustomAxiosPost = axios.create({
-  baseURL: "http://localhost:5100",
+  baseURL: "http://kdt-sw2-seoul-team14.elicecoding.com:5000",
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -10,7 +10,7 @@ export const CustomAxiosPost = axios.create({
 });
 
 export const CustomAxiosGet = axios.create({
-  baseURL: "http://localhost:5100",
+  baseURL: "http://kdt-sw2-seoul-team14.elicecoding.com:5000",
   headers: {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
   },

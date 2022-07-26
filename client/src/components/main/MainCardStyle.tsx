@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 const MainCardWrapper = styled.div`
   display: grid;
@@ -11,11 +11,11 @@ const MainCardWrapper = styled.div`
 `;
 
 const MainCardContainer = styled(Link)`
-  width: 300px;
+  width: 290px;
   height: 385px;
   margin: 24px;
   border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 6px 16px;
+  /* box-shadow: rgba(0, 0, 0, 0.12) 0px 6px 16px; */
   cursor: pointer;
   text-decoration: none;
   color: black;
@@ -28,7 +28,7 @@ const MainCardContainer = styled(Link)`
 const MainCardContent = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 5px;
+  margin-top: 1rem;
   padding: 0 10px 0 10px;
 `;
 
@@ -42,7 +42,7 @@ const MainCardAdress = styled.div`
 `;
 
 const MainCardImg = styled.img`
-  border-radius: 16px;
+  border-radius: 10px;
 `;
 
 export {

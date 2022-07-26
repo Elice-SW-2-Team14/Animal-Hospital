@@ -68,6 +68,7 @@ export const ImgContainer = styled.div`
   cursor: pointer;
 `;
 export const PetImg = styled.img`
+  min-width: 400px;
   max-width: 400px;
   max-height: 300px;
   border-radius: 15px;

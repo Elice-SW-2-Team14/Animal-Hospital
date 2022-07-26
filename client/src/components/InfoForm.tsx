@@ -31,10 +31,12 @@ export const InputLabel = styled.p`
 `;
 export const InfoInput = styled.input`
   background: none;
+  width: 50%;
   border: none;
   outline: none;
   color: #a0a0a0;
 `;
+
 export const InfoBtn = styled.button`
   /* background-color: ${(props) => props.theme.palette.orange}; */
   background-color: black;

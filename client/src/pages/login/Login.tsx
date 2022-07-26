@@ -17,13 +17,14 @@ import { CustomAxiosPost } from "../../common/CustomAxios";
 import { useRecoilState } from "recoil";
 import { hospitalLoginState, THospital } from "../../state/HospitalState";
 import { TUser, userState } from "../../state/UserState";
+import { customAxios } from "../../utils/AxiosModule";
 
 type LoginState = {
   email: string;
   password: string;
 };
 
-function LoginLayout() {
+function Login() {
   const navigate = useNavigate();
   const [isCheckUser, setIsCheckUser] = useState<boolean>(false);
   const [logins, setLogins] = useState<LoginState>({
@@ -51,7 +52,7 @@ function LoginLayout() {
     // 만일 일반 유저가 로그인 했다면
     if (!isCheckUser) {
       try {
-        const result = await CustomAxiosPost.post("/api/login", logins);
+        const result = await customAxios.post("/api/login", logins);
         const { token, role, userStatus } = result.data.userToken;
 
         setUser({
@@ -61,16 +62,13 @@ function LoginLayout() {
         });
 
         if (userStatus === "expired") {
-          console.log("여길 안지나감?");
           alert("탈퇴한 유저 입니다.");
           return;
         }
 
         localStorage.setItem("token", token);
-        alert("로그인에 성공하였습니다.");
         navigate("/");
       } catch (e) {
-        console.log(e);
         alert("아이디 또는 비밀번호 오류입니다.");
       }
     } else {
@@ -87,6 +85,7 @@ function LoginLayout() {
           hospitalName,
           hospitalState,
         });
+
         if (hospitalState === "추가정보 미기입") {
           alert("추가정보를 기입해주세요.");
           navigate("/hospital-info");
@@ -106,7 +105,8 @@ function LoginLayout() {
 
   const handleKakaoLogin = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    window.location.href = "http://localhost:5100/api/login/kakao";
+    window.location.href =
+      "http://kdt-sw2-seoul-team14.elicecoding.com:5000/api/login/kakao";
   };
 
   return (
@@ -166,4 +166,4 @@ function LoginLayout() {
   );
 }
 
-export default LoginLayout;
+export default Login;

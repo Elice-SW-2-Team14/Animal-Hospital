@@ -16,7 +16,6 @@ function AdminMypage() {
   return (
     <div style={{ maxWidth: "700px", margin: "2rem auto" }}>
       <MypageHeader>
-        <HeaderTitle>이름님</HeaderTitle>
         <HeaderDescription>마이페이지에 오신걸 환영합니다.</HeaderDescription>
       </MypageHeader>
       <Container>
@@ -44,7 +43,7 @@ function AdminMypage() {
         </Card>
         <Card
           onClick={() => {
-            navigate("/reservation");
+            navigate("/admin-reserv");
           }}
         >
           <i className="fa-solid fa-book fa-xl"></i>

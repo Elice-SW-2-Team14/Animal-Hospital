@@ -17,15 +17,16 @@ const TimeContainer = styled.button`
   font-weight: 600;
   margin: 0 5px 5px;
   border: none;
-  border: 1px solid #c8e1af;
-  background-color: #edfbdc;
+  border-radius: 10px;
+  border: 1px solid ${(props) => props.theme.palette.orange};
+  background-color: ${(props) => props.theme.palette.orange};
   cursor: pointer;
   &:hover {
-    background-color: #edfbdc;
-    color: #c8e1af;
+    transform: scale(1.05);
   }
   &:focus {
-    background-color: #00c73c;
+    border: 1px solid ${(props) => props.theme.palette.peach};
+    background-color: ${(props) => props.theme.palette.peach};
     color: white;
   }
 `;

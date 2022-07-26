@@ -26,7 +26,7 @@ const CalenderUi = () => {
       }월 ${value.getDate()}일`,
     });
   };
-  console.log("date:", date);
+  // console.log("date:", date);
 
   return (
     <div>

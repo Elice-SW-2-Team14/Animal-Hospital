@@ -23,7 +23,7 @@ import {
 const defaultImg = "/defaultImg.png";
 const token = localStorage.getItem("token");
 
-function PetCard({ pet, onhandleDelete }: any) {
+function PetCard({ pet, idx, onhandleDelete }: any) {
   const [petInfo, setPetInfo] = useState<PetInfoType>({
     _id: "",
     image: "",
@@ -59,16 +59,19 @@ function PetCard({ pet, onhandleDelete }: any) {
 
   const onhandleUpdate = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    const data = { ...petInfo, petId: pet._id };
+    const data = { ...petInfo, petId: pet._id, sex: gender, neutralized: neut };
     try {
-      axios.patch(`http://localhost:5100/pet/update`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert("수정완료! 🐾");
+      axios.patch(
+        `http://kdt-sw2-seoul-team14.elicecoding.com:5000/pet/update`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (err) {
-      alert("입력값을 다시 한 번 확인해주세요 🥲");
+      // alert("입력값을 다시 한 번 확인해주세요 🥲");
     }
   };
 
@@ -133,7 +136,7 @@ function PetCard({ pet, onhandleDelete }: any) {
               <Item>
                 <RadioButton
                   type="radio"
-                  name="gender"
+                  name={`${idx}gender`}
                   value="F"
                   checked={gender === "F"}
                   onChange={(event) => onhandleGender(event)}
@@ -144,7 +147,7 @@ function PetCard({ pet, onhandleDelete }: any) {
               <Item>
                 <RadioButton
                   type="radio"
-                  name="gender"
+                  name={`${idx}gender`}
                   value="M"
                   checked={gender === "M"}
                   onChange={(event) => onhandleGender(event)}
@@ -162,7 +165,7 @@ function PetCard({ pet, onhandleDelete }: any) {
               <Item>
                 <RadioButton
                   type="radio"
-                  name="neutralized"
+                  name={`${idx}neutralized`}
                   value="완료"
                   checked={neut === "완료"}
                   onChange={(event) => onhandleNeut(event)}
@@ -173,7 +176,7 @@ function PetCard({ pet, onhandleDelete }: any) {
               <Item>
                 <RadioButton
                   type="radio"
-                  name="neutralized"
+                  name={`${idx}neutralized`}
                   value="미완료"
                   checked={neut === "미완료"}
                   onChange={(event) => onhandleNeut(event)}
@@ -184,7 +187,7 @@ function PetCard({ pet, onhandleDelete }: any) {
               <Item>
                 <RadioButton
                   type="radio"
-                  name="neutralized"
+                  name={`${idx}neutralized`}
                   value="모름"
                   checked={neut === "모름"}
                   onChange={(event) => onhandleNeut(event)}

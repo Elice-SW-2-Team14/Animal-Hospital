@@ -22,12 +22,14 @@ import { passportKakaoConfig } from './passport/KakaoStrategy';
 const app = express();
 
 // CORS 에러 방지
+
 // app.use(cors({ credentials: true, origin: 'http://localhost:3030' }));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
 
 app.use(cookieParser());
 // Content-Type: application/json 형태의 데이터를 인식하고 핸들링할 수 있게 함.

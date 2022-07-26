@@ -70,7 +70,7 @@ function ImgUploader({ updateImg }: any) {
                   height: "225px",
                   padding: "0.5px",
                 }}
-                src={`http://localhost:5000/${img.filePath}`}
+                src={`http://kdt-sw2-seoul-team14.elicecoding.com:5000/${img.filePath}`}
               />
             </div>
           ))} */}

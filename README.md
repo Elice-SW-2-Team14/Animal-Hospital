@@ -36,9 +36,19 @@
     - Recoil
     - Styled-Components
     - ant design
+    <img alt="React" src="https://img.shields.io/badge/-React-45b8d8?style=flat-square&logo=react&logoColor=white" />
+    <img alt="R" src="https://img.shields.io/badge/-Recoil-75aadb?style=flat-square&logo=R&logoColor=white" />
+    <img alt="styled-component" src="https://img.shields.io/badge/-styled component-red?style=flat-square&logo=Node.js&logoColor=white" />
+    <img alt="andt D" src="https://img.shields.io/badge/-ant design-yellowgreen?style=flat-square&logo=Node.js&logoColor=white" />
   - 백엔드
-    - Express, Node , typeScript
+    - Express, Node , typeScript 
     - Mongoose, multer
+    <img alt="Nodejs" src="https://img.shields.io/badge/-Nodejs-43853d?style=flat-square&logo=Node.js&logoColor=white" />
+    <img alt="Nodejs" src="https://img.shields.io/badge/-Nodejs-43853d?style=flat-square&logo=Node.js&logoColor=white" />
+    <img alt="TypeScript" src="https://img.shields.io/badge/-TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" />
+    <img alt="mongoose" src="https://img.shields.io/badge/-mongoose-019267?style=flat-square&logo=typescript&logoColor=white" />
+    <img alt="multer" src="https://img.shields.io/badge/-multer-012267?style=flat-square&logo=typescript&logoColor=white" />
+    
 - 와이어프레임 (https://www.figma.com/file/a3kGXG4pROSaKRw2bGbe43/Untitled?node-id=0%3A1)
 - 백로그 (https://docs.google.com/spreadsheets/d/1fnzdvJA-EznPGyC1x9B4hS8W0AHyugq7Nlm0ZIgf5rI/edit#gid=0)
 - 스토리보드 및 유저 시나리오

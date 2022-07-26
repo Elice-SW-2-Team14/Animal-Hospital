@@ -38,11 +38,10 @@ const HospitalService = () => {
     );
   }, []);
 
-  console.log(hospitalService);
   const selectServices = hospitalService.map(
-    (service: { name: string; price: number }, index: number) => (
+    (service: THospitalService, index: number) => (
       <MenuItem key={index} value={`${service.name}/${service.price}`}>
-        {service.name} / {service.price}
+        {service.name} / {service.price.toLocaleString()}
       </MenuItem>
     )
   );
@@ -69,9 +68,7 @@ const HospitalService = () => {
         id="demo-simple-small"
         label="pet"
         sx={{ width: 200 }}
-        defaultValue={
-          bookState ? `${bookState.hospName}/${bookState.price}` : ""
-        }
+        defaultValue=""
         onChange={handleChangeInfo}
       >
         {selectServices}

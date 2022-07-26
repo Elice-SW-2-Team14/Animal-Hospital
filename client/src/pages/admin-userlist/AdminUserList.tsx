@@ -20,25 +20,23 @@ const Btn = styled.button`
   font-weight: bold;
 `;
 
-const token = localStorage.getItem("token");
 function AdminUserList() {
+  const token = localStorage.getItem("token");
   const [datas, setDatas] = useState<UserInfoType[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>();
   const [sort, serSort] = useState<string>();
 
   useEffect(() => {
-    token &&
-      axios
-        .get("http://localhost:5100/api/userlist", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          console.log(res.data);
-          setDatas(res.data);
-        });
+    axios
+      .get("http://kdt-sw2-seoul-team14.elicecoding.com:5000/api/userlist", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setDatas(res.data);
+      });
   }, []);
 
   const SearchLists = search
@@ -89,7 +87,9 @@ function AdminUserList() {
         ? SearchLists.map((data: any, i: number) => (
             <UserCard key={i} data={data} />
           ))
-        : ex.map((data: any, i: number) => <UserCard key={i} data={data} />)}
+        : ex
+            .splice(0, 5)
+            .map((data: any, i: number) => <UserCard key={i} data={data} />)}
     </Container>
   );
 }

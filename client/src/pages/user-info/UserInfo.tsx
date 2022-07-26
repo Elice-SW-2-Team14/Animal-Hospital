@@ -22,8 +22,8 @@ import { useResetRecoilState } from "recoil";
 import { userState } from "../../state/UserState";
 import { hospitalLoginState } from "../../state/HospitalState";
 
-const token = localStorage.getItem("token");
 function UserInfo() {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   // 받아온 정보를 저장하는 state
   const [userInfo, setUserInfo] = useState<UserInfoType>({
@@ -47,17 +47,16 @@ function UserInfo() {
 
   // 처음 한 번만 서버 통신
   useEffect(() => {
-    token &&
-      axios
-        .get("http://localhost:5100/api/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          setUserInfo(res.data);
-          setAddr(res.data.address);
-        });
+    axios
+      .get("http://kdt-sw2-seoul-team14.elicecoding.com:5000/api/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setUserInfo(res.data);
+        setAddr(res.data.address);
+      });
   }, []);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,20 +98,15 @@ function UserInfo() {
       currentPassword: currentPassword,
       newPassword: newPassword,
     };
-    axios
-      .patch(`http://localhost:5100/api/users/${userInfo?.email}`, data, {
+    axios.patch(
+      `http://kdt-sw2-seoul-team14.elicecoding.com:5000/api/users/${userInfo?.email}`,
+      data,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((res) => {
-        console.log(res);
-
-        alert("수정이 완료되었습니다 👍");
-
-        // 수정할 때 마다 입력해야함 + 새로운 비밀번호는 입력하지 않아도 됨
-        // 현재 비밀번호 위치를 수정 옆으로?
-      });
+      }
+    );
   };
 
   // 로그아웃 함수
@@ -132,7 +126,7 @@ function UserInfo() {
     //TODO
     await axios
       .patch(
-        `http://localhost:5100/api/expiration
+        `http://kdt-sw2-seoul-team14.elicecoding.com:5000/api/expiration
       `,
         {},
         {
@@ -142,7 +136,7 @@ function UserInfo() {
         }
       )
       .then((res) => {
-        alert(`${userInfo.userName}님 탈퇴가 완료되었습니다 🥲`);
+        // alert(`${userInfo.userName}님 탈퇴가 완료되었습니다 🥲`);
         handleLogout();
         navigate("/");
       });
@@ -183,6 +177,7 @@ function UserInfo() {
             <InfoInput name="address1" value={addr.address1 || ""} disabled />
             <InfoInput
               name="address2"
+              placeholder="상세주소를 입력해주세요"
               onChange={onAddressChange}
               value={addr.address2 || ""}
             />
@@ -194,7 +189,10 @@ function UserInfo() {
         </Container>
         <Container>
           <InputLabel>비밀번호 확인</InputLabel>
-          <InfoInput ref={currentPwRef} placeholder="현재 비밀번호" />
+          <InfoInput
+            ref={currentPwRef}
+            placeholder="정보 수정 시 현재 비밀번호를 입력해주세요"
+          />
         </Container>
 
         <div style={{ display: "flex" }}>

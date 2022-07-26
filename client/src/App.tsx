@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, BrowserRouter, Route } from "react-router-dom";
 
-import Login from "./pages/login/LoginLayout";
+import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import UserMypage from "./pages/user-mypage/UserMypage";
 import UserInfo from "./pages/user-info/UserInfo";
@@ -17,6 +17,7 @@ import HospitalReserve from "./pages/hospital-reserve/HospitalReserve";
 
 import UserReserve from "./pages/user-reserv/UserReserve";
 import Layout from "./components/Layout";
+import AdminReserve from "./pages/admin-reserv/AdminReserve";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/admin-mypage" element={<AdminMypage />} />
           <Route path="/admin-userlist" element={<AdminUserList />} />
           <Route path="/admin-hplist" element={<AdminHospitalList />} />
+          <Route path="/admin-reserv" element={<AdminReserve />} />
         </Route>
       </Routes>
     </BrowserRouter>

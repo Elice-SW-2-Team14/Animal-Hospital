@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { CustomAxiosGet } from "../../common/CustomAxios";
-import ReservationModalForm from "../../components/book/ReservationModalForm";
 import { InfoCard, TextContainer, InfoText } from "../../components/Liststyle";
 
 export const Column = styled(InfoText)`
@@ -12,7 +11,9 @@ export default function ReserveCard() {
   const [reservedUser, setReservedUser] = useState([]);
 
   async function getData() {
-    const res = await CustomAxiosGet.get('/reservation/hospital/list?page=2&perPage=3');
+    const res = await CustomAxiosGet.get(
+      "/reservation/hospital/list?page=2&perPage=3"
+    );
     console.log(res.data.data.reservationInfo);
   }
 
@@ -25,12 +26,8 @@ export default function ReserveCard() {
           <Column>인덱스</Column>
           <Column>날짜+시간</Column>
           <Column>병원이름</Column>
-          <Column>상태</Column>
-          <Column>
-            <ReservationModalForm />
-          </Column>
         </TextContainer>
       </InfoCard>
     </>
-  )
+  );
 }

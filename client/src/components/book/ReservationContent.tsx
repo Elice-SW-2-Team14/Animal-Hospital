@@ -11,7 +11,7 @@ const ReservationContent = ({ label, defaultValue, name }: TBookProps) => {
   return (
     <Container>
       <InputLabel>{label}</InputLabel>
-      <InfoInput defaultValue={defaultValue} />
+      <InfoInput defaultValue={defaultValue} disabled />
     </Container>
   );
 };
