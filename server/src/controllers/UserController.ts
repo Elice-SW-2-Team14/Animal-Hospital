@@ -176,7 +176,10 @@ export async function updateUserInfoCTR (req : Request, res : Response, next : N
 
 export async function getAllUsersCTR (req : Request, res : Response, next : NextFunction) {
     try {
-        const users = await userService.getUsers();
+        const page = Number(req.query.page || 1);
+        const perPage = Number(req.query.perPage || 10)
+        
+        const users = await userService.getUsers(page, perPage);
         res.status(200).json(users);
     } catch (error) {
         next(error)
@@ -222,7 +225,9 @@ export async function loginKakaoCTR (req : Request, res : Response, next : NextF
             )
 
             await userService.saveRefreshToken(user._id);
-
+            
+            res.cookie("accessToken" , accessToken);
+            
             return res.status(200).json({
                 userToken : {
                     accessToken,

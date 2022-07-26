@@ -166,8 +166,8 @@ class UserService {
     }
   }
 
-  async getUsers(): Promise<UserData[]> {
-    const users = await this.userModel.findAll();
+  async getUsers(page : number, perPage : number): Promise<UserData[]> {
+    const users = await this.userModel.findAllByPage(page, perPage);
     return users;
   }
 

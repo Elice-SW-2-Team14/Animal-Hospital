@@ -58,3 +58,10 @@ export interface UserInfoRequired {
     email: string;
     currentPassword: string;
   }
+
+export interface UserDataPerPage { 
+  users : UserData[],
+  page : number;
+  perPage : number;
+  totalPage : number
+}
