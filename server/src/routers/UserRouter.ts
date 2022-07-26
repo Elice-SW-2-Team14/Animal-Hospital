@@ -31,7 +31,7 @@ router.patch('/users/:userEmail', loginRequired, updateUserInfoCTR);
 router.get('/userlist', adminOnly, getAllUsersCTR);
 
 // 관리자의 일반회원 상태 변경
-router.patch('/admin/status', loginRequired, setUserStatusCTR);
+router.patch('/admin/status', loginRequired, adminOnly, setUserStatusCTR);
 
 // 일반 회원 탈퇴 
 router.patch('/expiration', loginRequired, ExpireUserCTR)

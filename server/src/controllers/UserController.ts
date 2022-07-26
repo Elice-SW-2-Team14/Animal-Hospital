@@ -241,13 +241,7 @@ export async function loginKakaoCTR (req : Request, res : Response, next : NextF
 
 export async function setUserStatusCTR (req : Request, res : Response, next : NextFunction){
     try{
-        const isAdmin = req.userRole === "admin";  //로그인한 사용자의 role
-        if(!isAdmin){
-            throw new HttpError(403, "권한없는 사용자입니다.")
-        }
         const {userId, userStatus} = req.body;
-        console.log(req.userRole);
-        console.log(req.body);
         const requiredParams = ['userId', 'userStatus'];
         blockInvalidRequest(req.body, requiredParams);
         
