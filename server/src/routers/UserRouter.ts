@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import * as _ from 'lodash'; 
 
 import { loginRequired, adminOnly, } from '../middlewares';
-import { registerUserCTR, loginUserCTR, getUserInfoCTR, updateUserInfoCTR, getAllUsersCTR, ExpireUserCTR, loginKakaoCTR, loginPassportCTR, setUserStatusCTR } from '../controllers/UserController';
+import { registerUserCTR, loginUserCTR, getUserInfoCTR, updateUserInfoCTR, getAllUsersCTR, ExpireUserCTR, loginKakaoCTR, loginPassportCTR, setUserStatusCTR, getKakaoTokenCTR } from '../controllers/UserController';
 import passport from 'passport';
 import { passportConfig } from '../passport';
 import {passportKakaoConfig} from '../passport/KakaoStrategy';
@@ -20,6 +20,9 @@ router.get('/login/kakao', passport.authenticate('kakao'));
 router.get('/login/kakao/callback',loginKakaoCTR);
 passportConfig();
 passportKakaoConfig();
+
+//passport-kakao에서 비롯된 토큰 넘기기 위함
+router.get('/auth', getKakaoTokenCTR);
 
 //일반회원 개인정보 조회
 router.get('/user', loginRequired, getUserInfoCTR);

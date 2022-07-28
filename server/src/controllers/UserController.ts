@@ -9,7 +9,8 @@ import {Strategy as LocalStrategy} from 'passport-local';
 // import { passportLoginVerify } from '../passport/LocalStrategy';
 import logger from 'jet-logger';
 import jwt from 'jsonwebtoken';
-
+import querystring from 'querystring';
+import { userRouter } from '../routers';
 
 
 export async function registerUserCTR (req : Request, res : Response, next : NextFunction) {
@@ -222,14 +223,25 @@ export async function loginKakaoCTR (req : Request, res : Response, next : NextF
             )
 
             await userService.saveRefreshToken(user._id);
+            
+            const userToken = {
+                accessToken : accessToken,
+                role : user.role,
+                userStatus : user.userStatus
 
-            return res.status(200).json({
-                userToken : {
-                    accessToken,
-                    role : user.role,
-                    userStatus : user.userStatus
-                }
-            });
+            }
+            console.log(req.session);
+            const expiryDate = new Date(Date.now() + 60*60*24*1000*1);
+            res.cookie("accessToken" , accessToken, {httpOnly : true})
+            .cookie('token', userToken, {
+                expires : expiryDate,
+                httpOnly: true,
+           } )
+        //     .redirect('http://localhost:3030/')
+            const registerFrontUrl = `http://localhost:3030/register?token=${userToken}&userName=${user.userName}&email=${user.email}&role=${user.role}&userStatus=${user.userStatus}`;
+            res.redirect(registerFrontUrl)
+                       
+            
         })(req,res)   
     
     } catch (error) {
@@ -258,4 +270,9 @@ export async function setUserStatusCTR (req : Request, res : Response, next : Ne
     } catch (error) {
         next(error)
     }
+}
+
+
+export async function getKakaoTokenCTR (req : Request, res : Response, next : NextFunction) {
+    return req;
 }
